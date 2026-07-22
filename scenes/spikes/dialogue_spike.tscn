@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/spikes/dialogue_spike.gd" id="1_spike"]
+
+[node name="DialogueSpike" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_spike")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.12, 0.16, 1)
+
+[node name="Status" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 700.0
+offset_bottom = 130.0
+mouse_filter = 2
+text = "..."

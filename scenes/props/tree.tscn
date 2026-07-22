@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="BoxMesh" id="TrunkMesh"]
+size = Vector3(0.8, 4, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="TrunkMat"]
+albedo_color = Color(0.32, 0.22, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="CanopyMesh"]
+size = Vector3(3.5, 3, 3.5)
+
+[sub_resource type="StandardMaterial3D" id="CanopyMat"]
+albedo_color = Color(0.16, 0.32, 0.15, 1)
+
+[node name="Tree" type="Node3D"]
+
+[node name="Trunk" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+mesh = SubResource("TrunkMesh")
+surface_material_override/0 = SubResource("TrunkMat")
+
+[node name="Canopy" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+mesh = SubResource("CanopyMesh")
+surface_material_override/0 = SubResource("CanopyMat")

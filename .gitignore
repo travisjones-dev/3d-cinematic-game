@@ -1,0 +1,11 @@
+# Godot 4 - editor cache/import artifacts (regenerated on import, never commit)
+.godot/
+export_presets.cfg
+
+# Godot mono-specific (not used here, but harmless to exclude)
+.mono/
+data_*/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://dlk2t2qxuti4c"]
+
+[ext_resource type="Script" uid="uid://1bej4xxvavtr" path="res://scripts/data/quest_resource.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://bgcn43m37nhrt" path="res://scripts/data/quest_stage.gd" id="2_stage"]
+
+[sub_resource type="Resource" id="Stage_0"]
+script = ExtResource("2_stage")
+summary = "Find your friend at the village edge."
+complete_flag = "act1/talked_to_friend"
+
+[sub_resource type="Resource" id="Stage_1"]
+script = ExtResource("2_stage")
+summary = "Say goodbye to Aeia at the old tower."
+complete_flag = "act1/said_farewell"
+
+[sub_resource type="Resource" id="Stage_2"]
+script = ExtResource("2_stage")
+summary = "Return to your friend, he is waiting to head out."
+complete_flag = "act1/ready_to_leave"
+
+[resource]
+script = ExtResource("1_quest")
+id = "act1/village_quest"
+title = "The Last Afternoon"
+stages = Array[ExtResource("2_stage")]([SubResource("Stage_0"), SubResource("Stage_1"), SubResource("Stage_2")])

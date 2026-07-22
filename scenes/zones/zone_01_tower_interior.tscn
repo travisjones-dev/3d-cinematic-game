@@ -1,0 +1,1054 @@
+[gd_scene format=3 uid="uid://o1yb7v2f4k3h"]
+
+[ext_resource type="Script" uid="uid://2werluli3mvs" path="res://scripts/components/npc_interactable.gd" id="1_npc"]
+[ext_resource type="Script" uid="uid://coutofil5gipv" path="res://scripts/components/zone_exit.gd" id="2_exit"]
+[ext_resource type="Shader" path="res://shaders/soft_dot.gdshader" id="3_softdot"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+sky_top_color = Color(0.3, 0.32, 0.36, 1)
+sky_horizon_color = Color(0.5, 0.5, 0.52, 1)
+ground_bottom_color = Color(0.22, 0.22, 0.24, 1)
+ground_horizon_color = Color(0.4, 0.4, 0.42, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 2
+sky = SubResource("Sky")
+ambient_light_source = 3
+ambient_light_energy = 0.35
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.4
+glow_bloom = 0.1
+glow_hdr_threshold = 0.95
+glow_blend_mode = 2
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.03
+volumetric_fog_albedo = Color(0.7, 0.65, 0.55, 1)
+volumetric_fog_anisotropy = 0.4
+volumetric_fog_length = 24.0
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(8, 0.5, 8)
+
+[sub_resource type="StandardMaterial3D" id="StoneMat"]
+albedo_color = Color(0.5, 0.5, 0.52, 1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(8, 0.5, 8)
+
+[sub_resource type="BoxMesh" id="WallLongMesh"]
+size = Vector3(8, 9.8, 0.4)
+
+[sub_resource type="BoxShape3D" id="WallLongShape"]
+size = Vector3(8, 9.8, 0.4)
+
+[sub_resource type="BoxMesh" id="WallSideMesh"]
+size = Vector3(0.4, 9.8, 8)
+
+[sub_resource type="BoxShape3D" id="WallSideShape"]
+size = Vector3(0.4, 9.8, 8)
+
+[sub_resource type="BoxMesh" id="WindowMesh"]
+size = Vector3(0.15, 1.8, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="WindowMat"]
+albedo_color = Color(0.15, 0.2, 0.3, 1)
+emission_enabled = true
+emission = Color(0.5, 0.55, 0.35, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="BoxMesh" id="WallShortMesh"]
+size = Vector3(3, 9.8, 0.4)
+
+[sub_resource type="BoxShape3D" id="WallShortShape"]
+size = Vector3(3, 9.8, 0.4)
+
+[sub_resource type="BoxMesh" id="WallLintelMesh"]
+size = Vector3(2, 7.3, 0.4)
+
+[sub_resource type="BoxShape3D" id="WallLintelShape"]
+size = Vector3(2, 7.3, 0.4)
+
+[sub_resource type="BoxShape3D" id="CornerFillShape"]
+size = Vector3(1.2, 3.3335295, 1.2)
+
+[sub_resource type="BoxMesh" id="CornerFillMesh"]
+size = Vector3(1.2, 9.8, 1.2)
+
+[sub_resource type="CylinderMesh" id="NewelMesh"]
+top_radius = 2.5
+bottom_radius = 2.5
+height = 8.9
+
+[sub_resource type="CylinderShape3D" id="NewelShape"]
+height = 8.9
+radius = 2.5
+
+[sub_resource type="BoxMesh" id="StepMesh"]
+size = Vector3(1.8, 0.3, 1)
+
+[sub_resource type="StandardMaterial3D" id="RampMat"]
+albedo_color = Color(0.35, 0.27, 0.18, 1)
+
+[sub_resource type="BoxShape3D" id="StepShape"]
+size = Vector3(1.8, 0.3, 1)
+
+[sub_resource type="CylinderMesh" id="PlatformMesh"]
+top_radius = 2.8
+bottom_radius = 2.8
+height = 0.3
+
+[sub_resource type="CylinderShape3D" id="PlatformShape"]
+height = 0.3
+radius = 2.4936523
+
+[sub_resource type="CapsuleMesh" id="NpcMesh"]
+
+[sub_resource type="StandardMaterial3D" id="LoveMat"]
+albedo_color = Color(0.86, 0.6, 0.7, 1)
+
+[sub_resource type="BoxShape3D" id="AeiaTriggerShape"]
+size = Vector3(3.5, 3, 3.5)
+
+[sub_resource type="BoxShape3D" id="ExitTriggerShape"]
+size = Vector3(3, 3, 2)
+
+[sub_resource type="QuadMesh" id="TowerDustMesh"]
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="TowerDustMat"]
+shader = ExtResource("3_softdot")
+shader_parameter/tint = Color(0.85, 0.8, 0.7, 1)
+shader_parameter/alpha_scale = 0.4
+
+[sub_resource type="ParticleProcessMaterial" id="TowerDustProcess"]
+emission_shape = 3
+emission_box_extents = Vector3(2.2, 1.5, 2.2)
+direction = Vector3(0, 1, 0)
+spread = 30.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 0.03
+initial_velocity_max = 0.1
+scale_min = 1.0
+scale_max = 1.8
+
+[node name="Zone01TowerInterior" type="Node3D" unique_id=1299553467]
+
+[node name="Lighting" type="Node3D" parent="." unique_id=1291758775]
+
+[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=119355376]
+transform = Transform3D(1, 0, 0, 0, 0.1736, -0.9848, 0, 0.9848, 0.1736, 0, 12, 0)
+light_color = Color(0.85, 0.82, 0.78, 1)
+light_energy = 1.0
+light_angular_distance = 1.0
+shadow_enabled = true
+
+[node name="WindowGlow" type="OmniLight3D" parent="Lighting" unique_id=1311181089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 7.5, 0)
+light_color = Color(0.9, 0.85, 0.6, 1)
+light_energy = 0.8
+omni_range = 6.0
+
+[node name="TopGlow" type="OmniLight3D" parent="Lighting" unique_id=1311181090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 10.5, -1.0)
+light_color = Color(0.95, 0.88, 0.72, 1)
+light_energy = 0.6
+omni_range = 4.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=1884856666]
+environment = SubResource("Env")
+
+[node name="Geometry" type="Node3D" parent="." unique_id=950817595]
+
+[node name="Floor" type="StaticBody3D" parent="Geometry" unique_id=1687126833]
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Floor" unique_id=194387201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("FloorMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Floor" unique_id=284828231]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("FloorShape")
+
+[node name="NorthWall" type="StaticBody3D" parent="Geometry" unique_id=1161700078]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9, -4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/NorthWall" unique_id=1708741183]
+mesh = SubResource("WallLongMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/NorthWall" unique_id=1390148349]
+shape = SubResource("WallLongShape")
+
+[node name="EastWall" type="StaticBody3D" parent="Geometry" unique_id=2073135382]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4.9, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EastWall" unique_id=358492084]
+mesh = SubResource("WallSideMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/EastWall" unique_id=326744254]
+shape = SubResource("WallSideShape")
+
+[node name="WestWall" type="StaticBody3D" parent="Geometry" unique_id=364502298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 4.9, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/WestWall" unique_id=2000403847]
+mesh = SubResource("WallSideMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/WestWall" unique_id=1435387790]
+shape = SubResource("WallSideShape")
+
+[node name="Window" type="MeshInstance3D" parent="Geometry/WestWall" unique_id=1627340438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 2.6, 0)
+mesh = SubResource("WindowMesh")
+surface_material_override/0 = SubResource("WindowMat")
+
+[node name="SouthLeft" type="StaticBody3D" parent="Geometry" unique_id=1729290503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 4.9, 4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthLeft" unique_id=324523397]
+mesh = SubResource("WallShortMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/SouthLeft" unique_id=1526312349]
+shape = SubResource("WallShortShape")
+
+[node name="SouthRight" type="StaticBody3D" parent="Geometry" unique_id=417943905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, 4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthRight" unique_id=1593540177]
+mesh = SubResource("WallShortMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/SouthRight" unique_id=980397713]
+shape = SubResource("WallShortShape")
+
+[node name="SouthLintel" type="StaticBody3D" parent="Geometry" unique_id=219622704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.15, 4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthLintel" unique_id=914669801]
+mesh = SubResource("WallLintelMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/SouthLintel" unique_id=1297923817]
+shape = SubResource("WallLintelShape")
+
+[node name="CornerFillNE" type="StaticBody3D" parent="Geometry" unique_id=1239293305]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 4.9, -3.2)
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/CornerFillNE" unique_id=1643192503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9641418, 0)
+shape = SubResource("CornerFillShape")
+
+[node name="CornerFillNW" type="StaticBody3D" parent="Geometry" unique_id=668427778]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 4.9, -3.2)
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/CornerFillNW" unique_id=1100928974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010894299, -3.68651, 0.0049858093)
+shape = SubResource("CornerFillShape")
+
+[node name="CornerFillSE" type="StaticBody3D" parent="Geometry" unique_id=1663215173]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 4.9, 3.2)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/CornerFillSE" unique_id=1911559190]
+mesh = SubResource("CornerFillMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/CornerFillSE" unique_id=1541722442]
+shape = SubResource("CornerFillShape")
+
+[node name="CornerFillSW" type="StaticBody3D" parent="Geometry" unique_id=1301553280]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 4.9, 3.2)
+
+[node name="Newel" type="StaticBody3D" parent="Geometry" unique_id=2079129484]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.45, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Newel" unique_id=999136137]
+mesh = SubResource("NewelMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Newel" unique_id=234499214]
+shape = SubResource("NewelShape")
+
+[node name="Stairs" type="Node3D" parent="Geometry" unique_id=1073870977]
+
+[node name="Step0" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1371513302]
+transform = Transform3D(0.9962, 0, -0.0872, 0, 1, 0, 0.0872, 0, 0.9962, 0.2615, -0.0875, 2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step0" unique_id=165263699]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step0" unique_id=1218130233]
+shape = SubResource("StepShape")
+
+[node name="Step1" type="StaticBody3D" parent="Geometry/Stairs" unique_id=942299379]
+transform = Transform3D(0.9659, 0, -0.2588, 0, 1, 0, 0.2588, 0, 0.9659, 0.7765, 0.0375, 2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step1" unique_id=341498425]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step1" unique_id=427694508]
+shape = SubResource("StepShape")
+
+[node name="Step2" type="StaticBody3D" parent="Geometry/Stairs" unique_id=930817391]
+transform = Transform3D(0.9063, 0, -0.4226, 0, 1, 0, 0.4226, 0, 0.9063, 1.2679, 0.1625, 2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step2" unique_id=398776481]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step2" unique_id=167505206]
+shape = SubResource("StepShape")
+
+[node name="Step3" type="StaticBody3D" parent="Geometry/Stairs" unique_id=695699077]
+transform = Transform3D(0.8192, 0, -0.5736, 0, 1, 0, 0.5736, 0, 0.8192, 1.7207, 0.2875, 2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step3" unique_id=1909588277]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step3" unique_id=1760791567]
+shape = SubResource("StepShape")
+
+[node name="Step4" type="StaticBody3D" parent="Geometry/Stairs" unique_id=974341231]
+transform = Transform3D(0.7071, 0, -0.7071, 0, 1, 0, 0.7071, 0, 0.7071, 2.1213, 0.4125, 2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step4" unique_id=207994049]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step4" unique_id=1379115336]
+shape = SubResource("StepShape")
+
+[node name="Step5" type="StaticBody3D" parent="Geometry/Stairs" unique_id=107157846]
+transform = Transform3D(0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, 0.5736, 2.4575, 0.5375, 1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step5" unique_id=1638288495]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step5" unique_id=1680808735]
+shape = SubResource("StepShape")
+
+[node name="Step6" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1258471788]
+transform = Transform3D(0.4226, 0, -0.9063, 0, 1, 0, 0.9063, 0, 0.4226, 2.7189, 0.6625, 1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step6" unique_id=297154658]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step6" unique_id=1706073761]
+shape = SubResource("StepShape")
+
+[node name="Step7" type="StaticBody3D" parent="Geometry/Stairs" unique_id=253726167]
+transform = Transform3D(0.2588, 0, -0.9659, 0, 1, 0, 0.9659, 0, 0.2588, 2.8978, 0.7875, 0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step7" unique_id=236267871]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step7" unique_id=1853283504]
+shape = SubResource("StepShape")
+
+[node name="Step8" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1547971610]
+transform = Transform3D(0.0872, 0, -0.9962, 0, 1, 0, 0.9962, 0, 0.0872, 2.9886, 0.9125, 0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step8" unique_id=169411722]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step8" unique_id=1773865589]
+shape = SubResource("StepShape")
+
+[node name="Step9" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1651823869]
+transform = Transform3D(-0.0872, 0, -0.9962, 0, 1, 0, 0.9962, 0, -0.0872, 2.9886, 1.0375, -0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step9" unique_id=699117130]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step9" unique_id=1042552351]
+shape = SubResource("StepShape")
+
+[node name="Step10" type="StaticBody3D" parent="Geometry/Stairs" unique_id=551309561]
+transform = Transform3D(-0.2588, 0, -0.9659, 0, 1, 0, 0.9659, 0, -0.2588, 2.8978, 1.1625, -0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step10" unique_id=1908306514]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step10" unique_id=1131212403]
+shape = SubResource("StepShape")
+
+[node name="Step11" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1173411493]
+transform = Transform3D(-0.4226, 0, -0.9063, 0, 1, 0, 0.9063, 0, -0.4226, 2.7189, 1.2875, -1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step11" unique_id=420551756]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step11" unique_id=1629510119]
+shape = SubResource("StepShape")
+
+[node name="Step12" type="StaticBody3D" parent="Geometry/Stairs" unique_id=868046412]
+transform = Transform3D(-0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, -0.5736, 2.4575, 1.4125, -1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step12" unique_id=1337591077]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step12" unique_id=1376234228]
+shape = SubResource("StepShape")
+
+[node name="Step13" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1205967826]
+transform = Transform3D(-0.7071, 0, -0.7071, 0, 1, 0, 0.7071, 0, -0.7071, 2.1213, 1.5375, -2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step13" unique_id=1611410384]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step13" unique_id=1624886590]
+shape = SubResource("StepShape")
+
+[node name="Step14" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1438409751]
+transform = Transform3D(-0.8192, 0, -0.5736, 0, 1, 0, 0.5736, 0, -0.8192, 1.7207, 1.6625, -2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step14" unique_id=1119553020]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step14" unique_id=1938581018]
+shape = SubResource("StepShape")
+
+[node name="Step15" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1013287643]
+transform = Transform3D(-0.9063, 0, -0.4226, 0, 1, 0, 0.4226, 0, -0.9063, 1.2679, 1.7875, -2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step15" unique_id=1652997941]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step15" unique_id=346083724]
+shape = SubResource("StepShape")
+
+[node name="Step16" type="StaticBody3D" parent="Geometry/Stairs" unique_id=253116151]
+transform = Transform3D(-0.9659, 0, -0.2588, 0, 1, 0, 0.2588, 0, -0.9659, 0.7765, 1.9125, -2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step16" unique_id=2025492988]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step16" unique_id=1228196566]
+shape = SubResource("StepShape")
+
+[node name="Step17" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1827647903]
+transform = Transform3D(-0.9962, 0, -0.0872, 0, 1, 0, 0.0872, 0, -0.9962, 0.2615, 2.0375, -2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step17" unique_id=27484474]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step17" unique_id=1578140629]
+shape = SubResource("StepShape")
+
+[node name="Step18" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1610849314]
+transform = Transform3D(-0.9962, 0, 0.0872, 0, 1, 0, -0.0872, 0, -0.9962, -0.2615, 2.1625, -2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step18" unique_id=1090188491]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step18" unique_id=1489065174]
+shape = SubResource("StepShape")
+
+[node name="Step19" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1861348451]
+transform = Transform3D(-0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, -0.9659, -0.7765, 2.2875, -2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step19" unique_id=1202915311]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step19" unique_id=2007442676]
+shape = SubResource("StepShape")
+
+[node name="Step20" type="StaticBody3D" parent="Geometry/Stairs" unique_id=883129122]
+transform = Transform3D(-0.9063, 0, 0.4226, 0, 1, 0, -0.4226, 0, -0.9063, -1.2679, 2.4125, -2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step20" unique_id=385474969]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step20" unique_id=1488694991]
+shape = SubResource("StepShape")
+
+[node name="Step21" type="StaticBody3D" parent="Geometry/Stairs" unique_id=766205381]
+transform = Transform3D(-0.8192, 0, 0.5736, 0, 1, 0, -0.5736, 0, -0.8192, -1.7207, 2.5375, -2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step21" unique_id=1316948393]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step21" unique_id=804770852]
+shape = SubResource("StepShape")
+
+[node name="Step22" type="StaticBody3D" parent="Geometry/Stairs" unique_id=924831532]
+transform = Transform3D(-0.7071, 0, 0.7071, 0, 1, 0, -0.7071, 0, -0.7071, -2.1213, 2.6625, -2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step22" unique_id=1013846065]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step22" unique_id=984181929]
+shape = SubResource("StepShape")
+
+[node name="Step23" type="StaticBody3D" parent="Geometry/Stairs" unique_id=909598092]
+transform = Transform3D(-0.5736, 0, 0.8192, 0, 1, 0, -0.8192, 0, -0.5736, -2.4575, 2.7875, -1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step23" unique_id=1406437313]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step23" unique_id=1675042851]
+shape = SubResource("StepShape")
+
+[node name="Step24" type="StaticBody3D" parent="Geometry/Stairs" unique_id=176829810]
+transform = Transform3D(-0.4226, 0, 0.9063, 0, 1, 0, -0.9063, 0, -0.4226, -2.7189, 2.9125, -1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step24" unique_id=1068341294]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step24" unique_id=773175936]
+shape = SubResource("StepShape")
+
+[node name="Step25" type="StaticBody3D" parent="Geometry/Stairs" unique_id=271870312]
+transform = Transform3D(-0.2588, 0, 0.9659, 0, 1, 0, -0.9659, 0, -0.2588, -2.8978, 3.0375, -0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step25" unique_id=1868544941]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step25" unique_id=1957831220]
+shape = SubResource("StepShape")
+
+[node name="Step26" type="StaticBody3D" parent="Geometry/Stairs" unique_id=426453517]
+transform = Transform3D(-0.0872, 0, 0.9962, 0, 1, 0, -0.9962, 0, -0.0872, -2.9886, 3.1625, -0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step26" unique_id=1191797192]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step26" unique_id=1216504319]
+shape = SubResource("StepShape")
+
+[node name="Step27" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1284479266]
+transform = Transform3D(0.0872, 0, 0.9962, 0, 1, 0, -0.9962, 0, 0.0872, -2.9886, 3.2875, 0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step27" unique_id=608549068]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step27" unique_id=462586335]
+shape = SubResource("StepShape")
+
+[node name="Step28" type="StaticBody3D" parent="Geometry/Stairs" unique_id=416271853]
+transform = Transform3D(0.2588, 0, 0.9659, 0, 1, 0, -0.9659, 0, 0.2588, -2.8978, 3.4125, 0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step28" unique_id=895323260]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step28" unique_id=1563693412]
+shape = SubResource("StepShape")
+
+[node name="Step29" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1804002391]
+transform = Transform3D(0.4226, 0, 0.9063, 0, 1, 0, -0.9063, 0, 0.4226, -2.7189, 3.5375, 1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step29" unique_id=1164243476]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step29" unique_id=77087815]
+shape = SubResource("StepShape")
+
+[node name="Step30" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1613289915]
+transform = Transform3D(0.5736, 0, 0.8192, 0, 1, 0, -0.8192, 0, 0.5736, -2.4575, 3.6625, 1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step30" unique_id=1406182488]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step30" unique_id=336703085]
+shape = SubResource("StepShape")
+
+[node name="Step31" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1878175424]
+transform = Transform3D(0.7071, 0, 0.7071, 0, 1, 0, -0.7071, 0, 0.7071, -2.1213, 3.7875, 2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step31" unique_id=1447740676]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step31" unique_id=408176777]
+shape = SubResource("StepShape")
+
+[node name="Step32" type="StaticBody3D" parent="Geometry/Stairs" unique_id=951018669]
+transform = Transform3D(0.8192, 0, 0.5736, 0, 1, 0, -0.5736, 0, 0.8192, -1.7207, 3.9125, 2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step32" unique_id=808588143]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step32" unique_id=1853843392]
+shape = SubResource("StepShape")
+
+[node name="Step33" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1905330028]
+transform = Transform3D(0.9063, 0, 0.4226, 0, 1, 0, -0.4226, 0, 0.9063, -1.2679, 4.0375, 2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step33" unique_id=92990760]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step33" unique_id=559261668]
+shape = SubResource("StepShape")
+
+[node name="Step34" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1909058443]
+transform = Transform3D(0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, 0.9659, -0.7765, 4.1625, 2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step34" unique_id=2111309112]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step34" unique_id=1278938067]
+shape = SubResource("StepShape")
+
+[node name="Step35" type="StaticBody3D" parent="Geometry/Stairs" unique_id=180974836]
+transform = Transform3D(0.9962, 0, 0.0872, 0, 1, 0, -0.0872, 0, 0.9962, -0.2615, 4.2875, 2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step35" unique_id=1930115317]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step35" unique_id=861885495]
+shape = SubResource("StepShape")
+
+[node name="Step36" type="StaticBody3D" parent="Geometry/Stairs" unique_id=106746035]
+transform = Transform3D(0.9962, 0, -0.0872, 0, 1, 0, 0.0872, 0, 0.9962, 0.2615, 4.4125, 2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step36" unique_id=2020107047]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step36" unique_id=32242368]
+shape = SubResource("StepShape")
+
+[node name="Step37" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1170361845]
+transform = Transform3D(0.9659, 0, -0.2588, 0, 1, 0, 0.2588, 0, 0.9659, 0.7765, 4.5375, 2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step37" unique_id=650446170]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step37" unique_id=338182404]
+shape = SubResource("StepShape")
+
+[node name="Step38" type="StaticBody3D" parent="Geometry/Stairs" unique_id=867093924]
+transform = Transform3D(0.9063, 0, -0.4226, 0, 1, 0, 0.4226, 0, 0.9063, 1.2679, 4.6625, 2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step38" unique_id=1176179889]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step38" unique_id=597724607]
+shape = SubResource("StepShape")
+
+[node name="Step39" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1959929493]
+transform = Transform3D(0.8192, 0, -0.5736, 0, 1, 0, 0.5736, 0, 0.8192, 1.7207, 4.7875, 2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step39" unique_id=903559176]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step39" unique_id=1012419950]
+shape = SubResource("StepShape")
+
+[node name="Step40" type="StaticBody3D" parent="Geometry/Stairs" unique_id=173968478]
+transform = Transform3D(0.7071, 0, -0.7071, 0, 1, 0, 0.7071, 0, 0.7071, 2.1213, 4.9125, 2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step40" unique_id=1348072347]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step40" unique_id=1262779091]
+shape = SubResource("StepShape")
+
+[node name="Step41" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1412149262]
+transform = Transform3D(0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, 0.5736, 2.4575, 5.0375, 1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step41" unique_id=404626812]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step41" unique_id=957684033]
+shape = SubResource("StepShape")
+
+[node name="Step42" type="StaticBody3D" parent="Geometry/Stairs" unique_id=910174581]
+transform = Transform3D(0.4226, 0, -0.9063, 0, 1, 0, 0.9063, 0, 0.4226, 2.7189, 5.1625, 1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step42" unique_id=1795569270]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step42" unique_id=1072840551]
+shape = SubResource("StepShape")
+
+[node name="Step43" type="StaticBody3D" parent="Geometry/Stairs" unique_id=492738388]
+transform = Transform3D(0.2588, 0, -0.9659, 0, 1, 0, 0.9659, 0, 0.2588, 2.8978, 5.2875, 0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step43" unique_id=1572344538]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step43" unique_id=1562077991]
+shape = SubResource("StepShape")
+
+[node name="Step44" type="StaticBody3D" parent="Geometry/Stairs" unique_id=821487786]
+transform = Transform3D(0.0872, 0, -0.9962, 0, 1, 0, 0.9962, 0, 0.0872, 2.9886, 5.4125, 0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step44" unique_id=907954754]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step44" unique_id=1695414612]
+shape = SubResource("StepShape")
+
+[node name="Step45" type="StaticBody3D" parent="Geometry/Stairs" unique_id=575208099]
+transform = Transform3D(-0.0872, 0, -0.9962, 0, 1, 0, 0.9962, 0, -0.0872, 2.9886, 5.5375, -0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step45" unique_id=1838131504]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step45" unique_id=1773516101]
+shape = SubResource("StepShape")
+
+[node name="Step46" type="StaticBody3D" parent="Geometry/Stairs" unique_id=490160489]
+transform = Transform3D(-0.2588, 0, -0.9659, 0, 1, 0, 0.9659, 0, -0.2588, 2.8978, 5.6625, -0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step46" unique_id=893121627]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step46" unique_id=1265779255]
+shape = SubResource("StepShape")
+
+[node name="Step47" type="StaticBody3D" parent="Geometry/Stairs" unique_id=279032278]
+transform = Transform3D(-0.4226, 0, -0.9063, 0, 1, 0, 0.9063, 0, -0.4226, 2.7189, 5.7875, -1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step47" unique_id=1424371040]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step47" unique_id=469957812]
+shape = SubResource("StepShape")
+
+[node name="Step48" type="StaticBody3D" parent="Geometry/Stairs" unique_id=888523263]
+transform = Transform3D(-0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, -0.5736, 2.4575, 5.9125, -1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step48" unique_id=92653685]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step48" unique_id=824552803]
+shape = SubResource("StepShape")
+
+[node name="Step49" type="StaticBody3D" parent="Geometry/Stairs" unique_id=66243488]
+transform = Transform3D(-0.7071, 0, -0.7071, 0, 1, 0, 0.7071, 0, -0.7071, 2.1213, 6.0375, -2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step49" unique_id=1446890795]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step49" unique_id=1099793662]
+shape = SubResource("StepShape")
+
+[node name="Step50" type="StaticBody3D" parent="Geometry/Stairs" unique_id=53551836]
+transform = Transform3D(-0.8192, 0, -0.5736, 0, 1, 0, 0.5736, 0, -0.8192, 1.7207, 6.1625, -2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step50" unique_id=1938312740]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step50" unique_id=565834638]
+shape = SubResource("StepShape")
+
+[node name="Step51" type="StaticBody3D" parent="Geometry/Stairs" unique_id=709888012]
+transform = Transform3D(-0.9063, 0, -0.4226, 0, 1, 0, 0.4226, 0, -0.9063, 1.2679, 6.2875, -2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step51" unique_id=1232576620]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step51" unique_id=1022058932]
+shape = SubResource("StepShape")
+
+[node name="Step52" type="StaticBody3D" parent="Geometry/Stairs" unique_id=552995156]
+transform = Transform3D(-0.9659, 0, -0.2588, 0, 1, 0, 0.2588, 0, -0.9659, 0.7765, 6.4125, -2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step52" unique_id=1410821167]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step52" unique_id=121253156]
+shape = SubResource("StepShape")
+
+[node name="Step53" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1410959891]
+transform = Transform3D(-0.9962, 0, -0.0872, 0, 1, 0, 0.0872, 0, -0.9962, 0.2615, 6.5375, -2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step53" unique_id=638882819]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step53" unique_id=1695538289]
+shape = SubResource("StepShape")
+
+[node name="Step54" type="StaticBody3D" parent="Geometry/Stairs" unique_id=25028070]
+transform = Transform3D(-0.9962, 0, 0.0872, 0, 1, 0, -0.0872, 0, -0.9962, -0.2615, 6.6625, -2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step54" unique_id=1621815887]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step54" unique_id=2009260361]
+shape = SubResource("StepShape")
+
+[node name="Step55" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1391304656]
+transform = Transform3D(-0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, -0.9659, -0.7765, 6.7875, -2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step55" unique_id=482918791]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step55" unique_id=1477911905]
+shape = SubResource("StepShape")
+
+[node name="Step56" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1749552044]
+transform = Transform3D(-0.9063, 0, 0.4226, 0, 1, 0, -0.4226, 0, -0.9063, -1.2679, 6.9125, -2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step56" unique_id=983189078]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step56" unique_id=676270466]
+shape = SubResource("StepShape")
+
+[node name="Step57" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1606492280]
+transform = Transform3D(-0.8192, 0, 0.5736, 0, 1, 0, -0.5736, 0, -0.8192, -1.7207, 7.0375, -2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step57" unique_id=351084960]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step57" unique_id=830311208]
+shape = SubResource("StepShape")
+
+[node name="Step58" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1882205039]
+transform = Transform3D(-0.7071, 0, 0.7071, 0, 1, 0, -0.7071, 0, -0.7071, -2.1213, 7.1625, -2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step58" unique_id=1600026818]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step58" unique_id=525031301]
+shape = SubResource("StepShape")
+
+[node name="Step59" type="StaticBody3D" parent="Geometry/Stairs" unique_id=38489507]
+transform = Transform3D(-0.5736, 0, 0.8192, 0, 1, 0, -0.8192, 0, -0.5736, -2.4575, 7.2875, -1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step59" unique_id=1996439658]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step59" unique_id=1001617]
+shape = SubResource("StepShape")
+
+[node name="Step60" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1149603512]
+transform = Transform3D(-0.4226, 0, 0.9063, 0, 1, 0, -0.9063, 0, -0.4226, -2.7189, 7.4125, -1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step60" unique_id=1812150317]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step60" unique_id=61474701]
+shape = SubResource("StepShape")
+
+[node name="Step61" type="StaticBody3D" parent="Geometry/Stairs" unique_id=867612512]
+transform = Transform3D(-0.2588, 0, 0.9659, 0, 1, 0, -0.9659, 0, -0.2588, -2.8978, 7.5375, -0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step61" unique_id=669142913]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step61" unique_id=1295348390]
+shape = SubResource("StepShape")
+
+[node name="Step62" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1482048003]
+transform = Transform3D(-0.0872, 0, 0.9962, 0, 1, 0, -0.9962, 0, -0.0872, -2.9886, 7.6625, -0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step62" unique_id=772695897]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step62" unique_id=1299235388]
+shape = SubResource("StepShape")
+
+[node name="Step63" type="StaticBody3D" parent="Geometry/Stairs" unique_id=5275988]
+transform = Transform3D(0.0872, 0, 0.9962, 0, 1, 0, -0.9962, 0, 0.0872, -2.9886, 7.7875, 0.2615)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step63" unique_id=174494282]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step63" unique_id=1319402159]
+shape = SubResource("StepShape")
+
+[node name="Step64" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1707835751]
+transform = Transform3D(0.2588, 0, 0.9659, 0, 1, 0, -0.9659, 0, 0.2588, -2.8978, 7.9125, 0.7765)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step64" unique_id=1034814811]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step64" unique_id=1349930479]
+shape = SubResource("StepShape")
+
+[node name="Step65" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1316550372]
+transform = Transform3D(0.4226, 0, 0.9063, 0, 1, 0, -0.9063, 0, 0.4226, -2.7189, 8.0375, 1.2679)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step65" unique_id=1435049187]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step65" unique_id=2092122534]
+shape = SubResource("StepShape")
+
+[node name="Step66" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1868776848]
+transform = Transform3D(0.5736, 0, 0.8192, 0, 1, 0, -0.8192, 0, 0.5736, -2.4575, 8.1625, 1.7207)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step66" unique_id=71745105]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step66" unique_id=1389658961]
+shape = SubResource("StepShape")
+
+[node name="Step67" type="StaticBody3D" parent="Geometry/Stairs" unique_id=787131954]
+transform = Transform3D(0.7071, 0, 0.7071, 0, 1, 0, -0.7071, 0, 0.7071, -2.1213, 8.2875, 2.1213)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step67" unique_id=1451656137]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step67" unique_id=759407941]
+shape = SubResource("StepShape")
+
+[node name="Step68" type="StaticBody3D" parent="Geometry/Stairs" unique_id=282707754]
+transform = Transform3D(0.8192, 0, 0.5736, 0, 1, 0, -0.5736, 0, 0.8192, -1.7207, 8.4125, 2.4575)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step68" unique_id=1560783794]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step68" unique_id=386430559]
+shape = SubResource("StepShape")
+
+[node name="Step69" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1045232914]
+transform = Transform3D(0.9063, 0, 0.4226, 0, 1, 0, -0.4226, 0, 0.9063, -1.2679, 8.5375, 2.7189)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step69" unique_id=1133745022]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step69" unique_id=2088087927]
+shape = SubResource("StepShape")
+
+[node name="Step70" type="StaticBody3D" parent="Geometry/Stairs" unique_id=1971739391]
+transform = Transform3D(0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, 0.9659, -0.7765, 8.6625, 2.8978)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step70" unique_id=96174448]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step70" unique_id=844879861]
+shape = SubResource("StepShape")
+
+[node name="Step71" type="StaticBody3D" parent="Geometry/Stairs" unique_id=2085729922]
+transform = Transform3D(0.9962, 0, 0.0872, 0, 1, 0, -0.0872, 0, 0.9962, -0.2615, 8.7875, 2.9886)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/Step71" unique_id=1293138170]
+mesh = SubResource("StepMesh")
+surface_material_override/0 = SubResource("RampMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/Step71" unique_id=1474291801]
+shape = SubResource("StepShape")
+
+[node name="TopPlatform" type="StaticBody3D" parent="Geometry/Stairs" unique_id=950642859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.75, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Stairs/TopPlatform" unique_id=802921559]
+transform = Transform3D(0.84446317, 0.01747101, 0, -0.013236227, 1.1146101, 0.004216908, 6.861228e-05, -0.0057777753, 0.813498, 0.018299341, 0.049907684, -0.015656233)
+mesh = SubResource("PlatformMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/Stairs/TopPlatform" unique_id=650371718]
+shape = SubResource("PlatformShape")
+
+[node name="Weather" type="Node3D" parent="." unique_id=1798069415]
+
+[node name="TowerDust" type="GPUParticles3D" parent="Weather" unique_id=1798069416]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 9.5, -1.5)
+amount = 18
+lifetime = 16.0
+preprocess = 10.0
+randomness = 0.5
+process_material = SubResource("TowerDustProcess")
+draw_pass_1 = SubResource("TowerDustMesh")
+material_override = SubResource("TowerDustMat")
+
+[node name="Interactables" type="Node3D" parent="." unique_id=1798069414]
+
+[node name="Aeia" type="Area3D" parent="Interactables" unique_id=777063987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 9.9, -1.5)
+script = ExtResource("1_npc")
+timeline = "res://dialogue/act1/love.dtl"
+prompt = "Speak with Aeia"
+
+[node name="Mesh" type="MeshInstance3D" parent="Interactables/Aeia" unique_id=2146903078]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9418097, 0, 1.6561785)
+mesh = SubResource("NpcMesh")
+surface_material_override/0 = SubResource("LoveMat")
+
+[node name="Trigger" type="CollisionShape3D" parent="Interactables/Aeia" unique_id=1753897263]
+shape = SubResource("AeiaTriggerShape")
+
+[node name="ExitToVillage" type="Area3D" parent="." unique_id=1633104318]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 3.4)
+script = ExtResource("2_exit")
+target_zone = "zone_01_village"
+target_spawn = "spawn_from_tower"
+prompt = "Leave the tower"
+
+[node name="Trigger" type="CollisionShape3D" parent="ExitToVillage" unique_id=1627900000]
+shape = SubResource("ExitTriggerShape")
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1077044558]
+
+[node name="from_village" type="Marker3D" parent="SpawnPoints" unique_id=1296256560]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3.5)

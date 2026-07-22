@@ -1,0 +1,8 @@
+A cracked pedestal holds an old sword.
+- Take the sword [if GameState.get_flag("act1/spike_sword_taken") == false]
+	[signal arg="set_flag act1/spike_sword_taken"]
+	Your fingers close around the hilt. It is yours now.
+- Leave it [if GameState.get_flag("act1/spike_sword_taken") == false]
+	You let it rest. Some burdens are best unclaimed.
+- (The pedestal is bare. You already claimed the blade.) [if GameState.get_flag("act1/spike_sword_taken") == true]
+	Nothing remains to take.

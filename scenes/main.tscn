@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://cpay5sy5msdqa"]
+
+[ext_resource type="Script" uid="uid://dbb4uwbq87njw" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_pcam"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="4_host"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="6_pause"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_o6xl0"]
+
+[sub_resource type="Resource" id="Resource_tipki"]
+script = ExtResource("7_o6xl0")
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 2
+sky = SubResource("Sky")
+tonemap_mode = 2
+
+[node name="Main" type="Node3D" unique_id=1392796138]
+script = ExtResource("1_main")
+
+[node name="ZoneRoot" type="Node3D" parent="." unique_id=1111674987]
+
+[node name="Player" parent="." unique_id=613698797 instance=ExtResource("2_player")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1430776925]
+
+[node name="HUD" parent="UI" unique_id=1684985773 instance=ExtResource("5_hud")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PauseMenu" parent="UI" unique_id=563191123 instance=ExtResource("6_pause")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FadeLayer" type="CanvasLayer" parent="." unique_id=1110387341]
+layer = 128
+
+[node name="FadeRect" type="ColorRect" parent="FadeLayer" unique_id=1067656708]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="MainCamera3D" type="Camera3D" parent="." unique_id=1308183946]
+physics_interpolation_mode = 1
+transform = Transform3D(1, 0, 0, 0, 0.92106104, 0.3894183, 0, -0.3894183, 0.92106104, 0, 2.1576734, 3.684244)
+top_level = true
+
+[node name="PhantomCameraHost" type="Node" parent="MainCamera3D" unique_id=1617465924]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("4_host")
+
+[node name="PlayerPhantomCamera3D" type="Node3D" parent="." unique_id=987786966 node_paths=PackedStringArray("follow_target")]
+transform = Transform3D(1, 0, 0, 0, 0.92106104, 0.3894183, 0, -0.3894183, 0.92106104, 0, 2.1576734, 3.684244)
+script = ExtResource("3_pcam")
+priority = 10
+follow_mode = 6
+follow_target = NodePath("../Player")
+tween_resource = SubResource("Resource_tipki")
+tween_on_load = false
+follow_offset = Vector3(0, 0.6, 0)
+follow_damping = true
+follow_distance = 4.0
+vertical_rotation_offset = 0.4
+spring_length = 4.0
+align_transform_with_view = Callable()
+align_position_with_view = Callable()
+align_rotation_with_view = Callable()
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=539885900]
+transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 10, 0)
+visible = false
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=892362206]
+environment = SubResource("Env")
