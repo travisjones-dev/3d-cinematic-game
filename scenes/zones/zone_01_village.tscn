@@ -500,7 +500,7 @@ mesh = SubResource("FlowerMesh")
 surface_material_override/0 = SubResource("FlowerMat")
 
 [node name="Horse" type="Node3D" parent="Props"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -5)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13, 0, -7.2)
 
 [node name="Body" type="MeshInstance3D" parent="Props/Horse"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
