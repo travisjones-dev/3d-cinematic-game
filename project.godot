@@ -29,8 +29,10 @@ DialogueBridge="*res://scripts/dialogue/dialogic_bridge.gd"
 
 directories/dch_directory={}
 directories/dtl_directory={
+"blacksmith": "res://dialogue/act1/blacksmith.dtl",
 "bridge_test": "res://dialogue/spikes/bridge_test.dtl",
 "cutscene_line": "res://dialogue/spikes/cutscene_line.dtl",
+"elder": "res://dialogue/act1/elder.dtl",
 "friend": "res://dialogue/act1/friend.dtl",
 "love": "res://dialogue/act1/love.dtl"
 }

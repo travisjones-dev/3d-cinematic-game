@@ -70,6 +70,7 @@
 - [x] Full-slice playthrough test: automated flag/quest/save chain green (test_village_quest + test_save_load_slice + test_cutscene/shore); human end-to-end playthrough confirmed 2026-07-21 (tower climb, dialogue toast timing, camera framing, quest-toast readability, village visual fixes, writing pass all checked)
 - [ ] Friend playtest against success criteria; log every unprompted world question they ask *(human)*
 - [ ] Bug fixes, with regression tests for anything touching GameState/quests/saves *(as found)*
+- [x] **SCOPE ADDITION (human decision, 2026-07-27):** two optional flavor NPCs given dialogue — **Elder Mishka** and **the blacksmith**. Both were already placed in `zone_01_village.tscn` as bare meshes and already named in `docs/zones/zone_01_home_village.md`, so this completes written Gate-0 intent rather than inventing new scope. Mishka delivers first-hand the thick-mist warning that `friend.dtl` already lets the player quote second-hand, plus a darkness/foreshadowing beat. **Deliberately NOT wired into `village_quest.tres`** — optional world-building only, so the quest chain and its save-safe stage indices are untouched. New flags `act1/talked_to_elder`, `act1/talked_to_blacksmith`. Prose is Claude-drafted and **needs a human writing pass.**
 
 ### Explicit non-goals for this milestone (from GAME_PITCH.md)
 No combat, no crafting/economy, no procedural terrain, no streaming, no voice acting, no multiplayer, no console ports. Placeholder art everywhere except lighting and mood.

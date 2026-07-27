@@ -54,6 +54,9 @@ size = Vector3(44, 6, 0.5)
 [sub_resource type="BoxShape3D" id="BarrierNorthShape"]
 size = Vector3(18, 6, 0.5)
 
+[sub_resource type="BoxShape3D" id="BarrierNorthGapShape"]
+size = Vector3(8.4, 6, 0.5)
+
 [sub_resource type="StandardMaterial3D" id="GroundMat"]
 albedo_color = Color(0.46, 0.5, 0.36, 1)
 
@@ -198,6 +201,9 @@ size = Vector3(3.5, 3, 3.5)
 
 [sub_resource type="BoxShape3D" id="ExitTriggerShape"]
 size = Vector3(10, 4, 6)
+
+[sub_resource type="BoxShape3D" id="SmithTriggerShape"]
+size = Vector3(3, 3, 3)
 
 [sub_resource type="CapsuleMesh" id="NpcMesh"]
 
@@ -477,6 +483,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 3, -21)
 [node name="Collision" type="CollisionShape3D" parent="Barriers/NorthEast"]
 shape = SubResource("BarrierNorthShape")
 
+[node name="NorthGap" type="StaticBody3D" parent="Barriers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -21)
+
+[node name="Collision" type="CollisionShape3D" parent="Barriers/NorthGap"]
+shape = SubResource("BarrierNorthGapShape")
+
 [node name="Props" type="Node3D" parent="."]
 
 [node name="Banner1" type="MeshInstance3D" parent="Props"]
@@ -500,7 +512,7 @@ mesh = SubResource("FlowerMesh")
 surface_material_override/0 = SubResource("FlowerMat")
 
 [node name="Horse" type="Node3D" parent="Props"]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13, 0, -7.2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13, 0, -7.2)
 
 [node name="Body" type="MeshInstance3D" parent="Props/Horse"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
@@ -654,15 +666,32 @@ shape = SubResource("TriggerShape")
 
 [node name="NPCs" type="Node3D" parent="."]
 
-[node name="Elder" type="MeshInstance3D" parent="NPCs"]
+[node name="Elder" type="Area3D" parent="NPCs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 3)
+script = ExtResource("3_npc")
+prompt = "Speak with Elder Mishka"
+timeline = "res://dialogue/act1/elder.dtl"
+
+[node name="Mesh" type="MeshInstance3D" parent="NPCs/Elder"]
 mesh = SubResource("NpcMesh")
 surface_material_override/0 = SubResource("ElderMat")
 
-[node name="Blacksmith" type="MeshInstance3D" parent="NPCs"]
+[node name="Trigger" type="CollisionShape3D" parent="NPCs/Elder"]
+shape = SubResource("TriggerShape")
+
+[node name="Blacksmith" type="Area3D" parent="NPCs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, -1.5)
+script = ExtResource("3_npc")
+prompt = "Talk to the blacksmith"
+timeline = "res://dialogue/act1/blacksmith.dtl"
+
+[node name="Mesh" type="MeshInstance3D" parent="NPCs/Blacksmith"]
 mesh = SubResource("NpcMesh")
 surface_material_override/0 = SubResource("SmithMat")
+
+[node name="Trigger" type="CollisionShape3D" parent="NPCs/Blacksmith"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.25)
+shape = SubResource("SmithTriggerShape")
 
 [node name="Friend" type="Area3D" parent="NPCs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -13)
