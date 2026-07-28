@@ -117,9 +117,15 @@ Compress-Archive -Path "build\vertical-slice.exe" -DestinationPath "build\vertic
 silently block bare executables.
 
 Channels: **itch.io** password-protected draft page (link, download counts, updates without
-re-sending) or a zip via Drive/WeTransfer. **GitHub Releases needs a working remote** — as of
-2026-07-27 `git ls-remote origin` reports `Repository not found`, so that route is unavailable until
-the remote is fixed.
+re-sending), a zip via Drive/WeTransfer, or **GitHub Releases** — attach the binary to a Release,
+never commit it (`build/` is gitignored and a 112 MB blob does not belong in git history).
+
+**Before pushing or cutting a release, check which GitHub account git is acting as.** Two are
+authenticated — `travisjonesphoenix` (work) and `travisjones-dev` (personal, owns this private repo).
+With the wrong one active, git reports a misleading `Repository not found`; it is an auth problem, not
+a missing remote. Run `gh auth switch --user travisjones-dev`. Do not "fix" it by embedding the
+username in the remote URL — that makes git **hang** on a credential prompt rather than fail fast.
+See `docs/BUILD.md`.
 
 ## What testers must be told, or they will bounce
 

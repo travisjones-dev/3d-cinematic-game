@@ -50,7 +50,15 @@ Carry this into the next session. Kept current so a fresh session can resume wit
 - **Consequence:** Forward+ needs working **Vulkan**. A tester on an old GPU may fail to launch; their fallback `--rendering-driver opengl3` drops to Compatibility and loses the fog, so their visual feedback would no longer be valid. Watch for "it looks flat" reports.
 - `export_presets.cfg` is now **committed** (plain text, no secrets, so builds are reproducible) and **removed from `.gitignore`**; `build/` is ignored instead. Preset produces a **single self-contained `.exe`** (`embed_pck=true`) and excludes `tests/*, docs/*, *.md, addons/gut/*`.
 - Export templates must match the engine **exactly** (`4.6.3.stable`) and are ~**1.2 GB**, not the ~800 MB first estimated. They are not bundled with the portable engine.
-- **GitHub Releases is not currently an option:** `git ls-remote origin` reports `Repository not found` for `travisjones-dev/3d-cinematic-game` — that remote is private-unauthenticated or gone. **The project currently has no working off-machine backup**, which matters given the notes' own warning to use git rather than OneDrive.
+- ~~GitHub Releases is not currently an option…~~ **CORRECTED 2026-07-28 — the remote was never missing.** See *Git remote* below.
+
+### Git remote — resolved 2026-07-28 (earlier diagnosis in these notes was wrong)
+- **`travisjones-dev/3d-cinematic-game` exists and is private**, last pushed 2026-07-22. The repeated `Repository not found` was an **authentication** problem, not a missing or deleted repo, so the claim in these notes that the project had "no working off-machine backup" was **false**.
+- **Root cause: two GitHub accounts are authenticated** — `travisjonesphoenix` (Phoenix work; owns `Phoenix-Health-Radar`, `The-Cartographer`) and `travisjones-dev` (personal; owns this repo, plus `frostfell`, matching the scrapped prototype in ROADMAP). The **active** account was the work one, and a work account simply cannot resolve a private repo owned by the personal one — GitHub returns "not found" rather than "no access", which is what made it look deleted.
+- **To push this repo, `travisjones-dev` must be the active account:** `gh auth switch --user travisjones-dev`.
+- **Dead end, do not repeat:** qualifying the remote URL as `https://travisjones-dev@github.com/...` is *worse*. It forces a username the active credential helper may not serve, and git then **hangs on a credential prompt** (2+ min, and `GIT_TERMINAL_PROMPT=0` does not help because the blocking is in the helper, not git's own prompt) instead of failing fast. Reverted to the plain URL, which at least fails cleanly.
+- **State now: pushed and in sync.** `origin/master` = `9533c72`; the 5 local commits (through the skills pass) are backed up off-machine. Active `gh` account was restored to `travisjonesphoenix`, as found.
+- **Still open (user decision):** whether to leave the active account as the work one and switch per push, make `travisjones-dev` the default, or set up per-account SSH host aliases so no switching is ever needed.
 
 - **Still open — both human-only, unchanged:** (a) human eyeball of the atmosphere pass (see next section — the single biggest item), (b) the friend playtest (ROADMAP Phase E, the literal Milestone-1 "done when").
 

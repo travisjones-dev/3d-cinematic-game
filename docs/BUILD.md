@@ -86,9 +86,24 @@ for every warning above.
 - **itch.io**, password-protected draft page — the usual playtest channel; gives testers a link,
   you get download counts, and you can push updates without re-sending files.
 - **Zip via Drive/WeTransfer** — zero setup, fine for a handful of testers.
-- **GitHub Releases** — *not currently available*: `git ls-remote origin` reports
-  `Repository not found` for `travisjones-dev/3d-cinematic-game`, so that remote is either
-  private-unauthenticated or gone. Fix the remote first if you want this route.
+- **GitHub Releases** — available, with a caveat. The remote
+  `travisjones-dev/3d-cinematic-game` **exists and is private**. Note a 112 MB binary does not belong
+  in git history; attach it to a *Release*, never commit it (`build/` is gitignored).
+
+### ⚠️ Two GitHub accounts are authenticated — git must be acting as the right one
+`gh auth status` shows both `travisjonesphoenix` (Phoenix work) and `travisjones-dev` (personal, owns
+this repo). **This project lives under `travisjones-dev`.** If the active account is the work one,
+git cannot see this private repo and reports a misleading `Repository not found` — it is an auth
+problem, not a missing remote. Before pushing or cutting a release:
+
+```powershell
+gh auth switch --user travisjones-dev
+```
+
+Do **not** try to fix this by putting the username in the remote URL
+(`https://travisjones-dev@github.com/...`). That forces a user the active credential helper may not
+serve, and git then **hangs** on a credential prompt instead of failing fast — worse than a clean
+error. Tried and reverted 2026-07-28.
 
 ## Collecting feedback
 
