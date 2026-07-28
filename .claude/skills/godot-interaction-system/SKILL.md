@@ -139,6 +139,20 @@ Make exit/interaction triggers **generous** (a wide `BoxShape3D`) and keep them 
 their prompts don't compete for the same spot. See `godot-zone-building` for funneling the player to
 exits.
 
+### ⚠️ "Keep them away from each other" is a hard requirement, not a preference
+`_on_interaction_available` is **last-entered-wins, not nearest-wins** — it assigns
+`_current_interactable` unconditionally, and `_on_interaction_lost` only clears when the node being
+left is the current one. Two overlapping triggers therefore let the player stand at one object while
+the other's prompt shows, and it sticks. This shipped: the blacksmith's default 3.5 m trigger
+overlapped `StableInteract`, offering "Greet your steed" while standing at the blacksmith.
+
+Equally: the `Trigger` child inherits the Area3D's position, but a **`Mesh` child can carry an
+offset** — so the art and the hitbox can end up in different places. Aeia ended up standing *outside
+her own trigger*, unreachable head-on.
+
+Both are guarded by tests, and the diagnosis/fix procedure plus the SceneState+AABB harness live in
+**`godot-playable-space-audit`**. Read it before placing any new interactable.
+
 ## Testing
 Test the logic by calling the handlers directly with a stand-in node in the "player" group
 and `watch_signals(EventBus)` — deterministic, no physics-frame overlap timing. See

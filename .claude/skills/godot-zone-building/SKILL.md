@@ -36,7 +36,17 @@ starting the zone's quest in `_ready` (safe on re-entry: `QuestManager.start` no
   no collision — see `godot-scene-authoring`). A `CharacterBody3D` player needs this to stand.
 - **Barrier the perimeter.** Put invisible walls at the zone edges so the player can't walk off the
   ground into the void: `StaticBody3D` + a tall `BoxShape3D` `CollisionShape3D`, **no mesh**, ringing
-  the playable area. Leave a **gap** where the exit is so the player can leave.
+  the playable area.
+- ### ⚠️ Do NOT leave a gap in the barrier at the exit
+  An earlier version of this skill said to leave a gap where the exit is "so the player can leave."
+  **That is wrong and it shipped a bug.** Zone exits are `zone_exit.gd` → `interactable.gd`, i.e. an
+  **E-press**, so the player never needs a physical opening — but a gap lets them walk straight
+  through and off the ground. The village's north barrier was split into two 18 m pieces around an
+  8 m gap for `ExitToShore`; the player fell to `y = -79`. The barrier must be **continuous**, exit or
+  not. Same rule for doorway apertures in walls. Full diagnosis, the door-vs-invisible-blocker choice,
+  overlap sizing, and the `radius + safe_margin` spawn check are in
+  **`godot-playable-space-audit`** — read it whenever you add an exit, and note that a barrier
+  positioned to block still has to leave the player inside the exit's trigger volume.
 
 ## Mood (the one art investment in the slice — pillar #2)
 `WorldEnvironment` + `Environment` (procedural sky, tonemap, subtle fog) + a coloured

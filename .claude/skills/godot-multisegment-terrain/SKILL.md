@@ -155,6 +155,32 @@ with its **origin** at `floor_top_y + capsule_half_height`, not at `floor_top_y`
 half-height 1.0), not the bare surface height — otherwise you'll misdiagnose a correctly
 climbing character as "floating a meter above the ramp."
 
+## Placing anything UNDER the spiral: floor area is not standing room
+The walkable ring between the newel and the wall looks free at floor level, but the treads overhead
+are lower than they appear, and the 2.0 m player capsule does not fit everywhere. Getting this wrong
+means the player is shoved by geometry above them.
+
+For the tower's 72-step spiral (0.125 m riser, 10° per step, starting at 5°):
+
+```
+step n   angle = (5 + 10n)°        surface y ≈ 0.0625 + 0.125n        underside ≈ surface - 0.15
+```
+
+Radially a tread spans **r 2.5..3.5** — the 1.8 dimension is *tangential*, not radial — so it covers
+most of the ring. Check the lowest step above your chosen angle:
+
+| Spot | Angle | Lowest step | Underside | 2.0 m capsule? |
+|---|---|---|---|---|
+| North | 180° | Step17, y 2.04 | ≈1.89 | **No** |
+| West | 270° | Step27, y 3.29 | ≈3.14 | Yes |
+
+That is why the tower's watchman's-tally secret sits on the **west** wall, not the north pocket that
+looked ideal on the floor plan. Confirm with a driven-player test that the capsule neither sinks nor
+drifts (`tests/test_tower_secret.gd`) — pattern in `godot-playable-space-audit`.
+
+Placing a prop or interactable here needs **no change to stair, newel, or corner-fill geometry** —
+keep that closed.
+
 ## When this is still not fully solved
 Even with `safe_margin` tuned well, a perfectly rigid straight-line-to-waypoint test path
 (the worst case — dead-center through every corner) may still stall a small fraction of the

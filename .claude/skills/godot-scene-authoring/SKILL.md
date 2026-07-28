@@ -45,12 +45,62 @@ mesh = SubResource("SomeMesh")
   Node order in the file is sibling order in the tree.
 
 ## Node transforms
-`Transform3D(xx,xy,xz, yx,yy,yz, zx,zy,zz, ox,oy,oz)` — first 9 are the basis vectors
-(x-axis, y-axis, z-axis columns), last 3 are the origin. Identity basis + a position:
-`Transform3D(1,0,0, 0,1,0, 0,0,1, X, Y, Z)`. For a rotation you can hand-write, a 45° tilt
-about X is `Transform3D(1,0,0, 0,0.707107,-0.707107, 0,0.707107,0.707107, 0,0,0)`. When the
-math gets hairy, set an identity transform in the file and orient it in code with `look_at()`
-in `_ready()` instead.
+`Transform3D(a,b,c, d,e,f, g,h,i, ox,oy,oz)` — first 9 are the basis, last 3 the origin.
+Identity basis + a position: `Transform3D(1,0,0, 0,1,0, 0,0,1, X, Y, Z)`.
+
+### ⚠️ The 9 basis floats are ROWS, not columns — the axes are the *diagonals* of the triples
+This is the single easiest way to silently get a rotation backwards, and it cost a whole
+debugging cycle on the village steed (2026-07-27). Earlier versions of this skill wrongly said
+the triples were "x-axis, y-axis, z-axis columns". They are **rows**, matching Godot's own
+9-float `Basis(xx,xy,xz, yx,yy,yz, zx,zy,zz)` constructor, which also takes rows:
+
+```
+Transform3D( a, b, c,      row 0
+             d, e, f,      row 1
+             g, h, i, … )  row 2
+
+X axis = (a, d, g)   <-- first element of EACH triple, not the first triple
+Y axis = (b, e, h)
+Z axis = (c, f, i)
+```
+
+So to point a model's local **+X** at world **+Z**, the X axis must be `(0,0,1)`, i.e.
+`a=0, d=0, g=1` → `Transform3D(0,0,-1, 0,1,0, 1,0,0, …)`. Reading the triples as columns gives
+you `Transform3D(0,0,1, 0,1,0, -1,0,0, …)`, which is the **transpose** — the same rotation with
+the opposite sign. Symmetric cases (a 45° tilt, a 180° flip) look identical either way, so the
+mistake hides until you hit an asymmetric one and the model faces backwards.
+
+**A 180° flip about Y is safe under either reading** — it negates the X and Z rows *and*
+columns identically — so `Transform3D(a,b,c,d,e,f,g,h,i)` → negate a,c,g,i. Useful when a
+playtester says "it's facing the wrong way": you can flip without resolving the convention.
+
+### Measure, don't derive
+When orientation matters, do not reason it out — **measure it in the engine**. Cheapest reliable
+method is a throwaway GUT test that prints real world positions:
+
+```gdscript
+var zone: Node3D = load("res://scenes/zones/my_zone.tscn").instantiate()
+add_child(zone)
+await get_tree().process_frame                 # required — transforms are not resolved before this
+var part: Node3D = zone.get_node("Props/Horse/Head")
+gut.p("head: %s" % part.global_position)       # then compare against the containing geometry
+```
+
+A bare `SceneTree` script reports **all-zero** global transforms, so use GutTest (or await a frame
+in a real tree). To validate *authored* transforms without instantiating anything, read the
+`.tscn` through `PackedScene.get_state()` and compose with `Transform3D` multiplication, which is
+exact and never touches basis internals — see `godot-playable-space-audit`.
+
+For a rotation you can hand-write, a 45° tilt about X is
+`Transform3D(1,0,0, 0,0.707107,-0.707107, 0,0.707107,0.707107, 0,0,0)`. When the math gets hairy,
+set an identity transform in the file and orient it in code with `look_at()` in `_ready()`.
+
+### Check a prop's built axis against the geometry that contains it
+Box-composed props here are commonly authored facing **+X** (body long axis on X, head/neck at
++X), while the structures that hold them open along **Z**. Placing one without rotating it puts
+the prop broadside across its container — the steed's head clipped through a stall divider into
+the neighbouring stall. Before placing, check which way the prop was built *and* which way its
+container opens.
 
 ## Instancing a sub-scene
 Compose scenes from other scenes rather than duplicating nodes:

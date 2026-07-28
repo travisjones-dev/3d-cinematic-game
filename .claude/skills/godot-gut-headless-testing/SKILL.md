@@ -157,6 +157,61 @@ necessary, not sufficient. For anything input-driven, get the **in-editor Debugg
 the human — that's the source of truth for input-time errors. Ask them to paste it rather than
 diagnosing input issues blind from source code.
 
+## ⚠️ A new test proves nothing until you have watched it FAIL
+
+The habit that has caught real mistakes here: after writing a regression test, **temporarily break
+the fix and confirm the test fails with the numbers you expect**, then revert. Cheap ways to do it:
+
+- `disabled = true` on a newly added `CollisionShape3D`
+- reinstate the bad offset/transform you just corrected
+
+Worked examples: disabling the tower door produced a fall to `y = -102`; disabling the village's
+`NorthGap` barrier produced `y = -79` at `z = -44.6`; restoring Aeia's mesh offset reported her body
+at x `+0.14` against a trigger ending at x `-0.05`. Each confirmed the test was measuring the real
+defect rather than passing incidentally. Report the observed failure numbers — they are the evidence
+the guard works.
+
+### Assert on shape and content, not just counts
+`assert_gt(tl.events.size(), 0)` passes on a **silently misparsed** file. A Dialogic line whose
+opening token was eaten as a speaker name still yields events, so the count test sails through while
+the dialogue is wrong. When validating parsed or generated data, assert the **event types and text**
+(dump them with `gut.p` first to see what you actually got). See `godot-dialogic-integration`.
+
+## ⚠️ GUT fails a test on ANY engine error — including documented-benign ones
+
+GUT reports engine errors raised during a test as `Unexpected Errors` and fails it, even when the
+error is known-harmless. The one that bites here:
+
+```
+ERROR: Parameter "material" is null.
+   at: material_get_instance_shader_parameters (servers/rendering/dummy/storage/material_storage.cpp:265)
+```
+
+It comes from the **headless dummy renderer** when zone scenes are instantiated in a test. It is
+benign at runtime, but it fails the test regardless.
+
+**Do not burn time hunting the offending node** — stripping every `GPUParticles3D` did not stop it,
+and excluding the shore did not either. Instead pick the right tool:
+
+- Validating **authored scene data** (positions, shapes, node structure)? Don't instantiate at all —
+  read the `.tscn` via `PackedScene.get_state()` and compose transforms by multiplication. Fast,
+  exact, no renderer. Harness in `godot-playable-space-audit`.
+- Genuinely need **physics** (can the player stand here, can they be shoved)? Instantiate a *single*
+  zone plus the player — `test_tower_stairs.gd`, `test_tower_doorway.gd` and `test_tower_secret.gd`
+  all do this successfully. Looping several zones in one test is what tipped it over.
+
+### Getting real world positions in a test
+`global_position` is only meaningful once the node is in a tree **and a frame has passed**:
+
+```gdscript
+add_child(zone)
+await get_tree().process_frame     # without this, everything reads (0, 0, 0)
+```
+
+A bare `extends SceneTree` script reports **all-zero** global transforms no matter what you do —
+use `GutTest`. A throwaway measurement test is the fastest way to settle any "which way is it
+facing / where actually is it" question; delete it afterwards.
+
 ### Expected noise on --quit-after: leak warnings are NOT bugs
 `--quit-after` force-quits before the scene tree unwinds cleanly, so Godot prints
 `WARNING: ObjectDB instances leaked at exit` and `ERROR: N resources still in use at

@@ -150,8 +150,44 @@ He nods toward the tower. But say goodbye to Elin first.
 label end
 ```
 `jump <label>` / `label <name>`. This gives re-greetings that reflect what you've done, with the
-first-visit choices safely top-level. Avoid colons in narration lines (a colon is parsed as
-`Speaker: text`); a leading `"` is also misparsed, so open lines with prose, not a quote.
+first-visit choices safely top-level. See the colon rule below before writing any prose.
+
+### Quotation marks are safe. Colons are the real hazard — and the rule is narrower than it looks
+Verified empirically on **2.0-alpha-19** by dumping parsed events (an earlier version of this skill
+wrongly claimed a leading `"` is misparsed — it is not):
+
+| Line | Parses as |
+|---|---|
+| `"A plain quoted line."` | ✅ `event_text`, quote preserved, no character |
+| `She takes your hand. "It came up too fast."` | ✅ `event_text` |
+| `- "Race you there."` | ✅ `event_choice`, quote preserved |
+| `She said: nothing at all.` | ✅ `event_text`, no character |
+| `"Wait: listen." She turns.` | ❌ character `"Wait`, text `listen." She turns.` |
+
+**The rule: a colon preceded by a single unbroken token at the start of the line is parsed as
+`Speaker: text`.** `She said:` survives because `She said` contains a space; `"Wait:` does not, so it
+is taken as a speaker name. This project has **no `.dch` character files**, so a misparse invents a
+phantom character and silently eats your opening word.
+
+Practical guidance now that quoted speech is the house style (playtest feedback, 2026-07-27):
+**quote freely, but never put a colon straight after the opening quoted word.** Use a full stop, a
+comma, or a dash instead. Narration stays unquoted; spoken words and player choice lines get double
+quotes.
+
+**It fails silently.** `assert_gt(tl.events.size(), 0)` still passes on a misparsed file, so a parse
+test cannot catch this. Dump events and check types/text when prose changes shape — see
+`godot-gut-headless-testing`.
+
+### Converting reported speech to direct quotes changes person
+Mechanical requoting is not mechanical. "She has no intention of marrying a ghost" became
+"**I** have no intention of marrying a ghost" — the pronoun has to shift, so flag requoting passes for
+a human read-through rather than treating them as formatting.
+
+### Creating a .dtl mutates project.godot
+Dialogic registers every timeline in `[dialogic] directories/dtl_directory` in `project.godot` on
+import. Two consequences: that edit is a **legitimate part of any commit** that adds a timeline, and a
+**throwaway test .dtl leaves a phantom entry behind** — delete the entry as well as the file, or it
+persists pointing at nothing.
 
 ### ⚠️ Place a quest-advancing flag at the END of the timeline, not after the first line
 A `[signal arg="set_flag …"]` fires the instant the timeline reaches it. If that flag is what a
