@@ -24,13 +24,13 @@ func _narrate(beat: int) -> void:
 	var line: String = ""
 	match beat:
 		0:
-			line = "The trees fall away and the shore opens before you. Mist lies heavy on the water; for a moment there is only the tide. Something's wrong."
+			line = "The trees fall away and the shore opens before you. Mist lies heavy on the water. No gulls. No wind. Only the tide, gone out further than it should be."
 		1:
-			line = "Something appears through the fog. Large, dark ships, more than you can count, sliding low and silent toward the sand. Raiders."
+			line = "Shapes harden in the fog. Not one, not five. More hulls than you can count, sliding low and silent toward the sand. You have heard the stories. Now you are counting them."
 		2:
-			line = "Your friend's sword slips from his fingers, and he sinks to his knees in the surf. You scream at him to get up, but he can't hear you."
+			line = "Your friend's sword slips from his fingers and rings on the stones. He sinks into the surf, and he does not look afraid. He looks like a man who already knew how this ends."
 		3:
-			line = "There is nothing you can do for him now. You turn from the shore and run for your life."
+			line = "There is nothing you can do for him now. You turn from the shore and run, and behind you the water keeps bringing them in."
 	EventBus.narration_requested.emit(line)
 
 func _on_cutscene_finished() -> void:

@@ -1,13 +1,13 @@
 if GameState.get_flag("act1/talked_to_blacksmith") == true:
-	The blacksmith grunts a greeting without looking up from the anvil. Mind the mist out there, lad. Iron does not float.
+	The blacksmith grunts a greeting without looking up from the anvil. "Mind the mist out there, lad. Iron does not float."
 	jump end
-The blacksmith straightens from the anvil, broad as a door, and wipes his hands down his apron. So. Today is the day.
-He nods toward the stables. Your mare is shod and sound. I put the good nails in her, not the cheap ones. She will carry you further than you deserve.
-- Thank you. Truly.
+The blacksmith straightens from the anvil, broad as a door, and wipes his hands down his apron. "So. Today is the day."
+He nods toward the stables. "Your mare is shod and sound. I put the good nails in her, not the cheap ones. She will carry you further than you deserve."
+- "Thank you. Truly."
 	He waves it off, embarrassed, and busies himself with a hammer that did not need moving.
-- How much do I owe you?
+- "How much do I owe you?"
 	He looks at you as though you have insulted his mother, and turns back to the anvil.
-He is quiet a moment. Then, lower, without turning around. I have put an edge on four blades this week. Four. Nobody told me why, and I did not think it my place to ask.
-He holds out your sword, the edge bright enough to shave with. Bring it home dull, boy. Dull means you came back.
+He is quiet a moment. Then, lower, without turning around. "I have put an edge on four blades this week. Four. Nobody told me why, and I did not think it my place to ask."
+He holds out your sword, the edge bright enough to shave with. "Bring it home dull, boy. Dull means you came back."
 [signal arg="set_flag act1/talked_to_blacksmith"]
 label end

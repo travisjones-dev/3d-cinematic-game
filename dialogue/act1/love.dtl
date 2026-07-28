@@ -1,11 +1,11 @@
 if GameState.get_flag("act1/said_farewell") == true:
 	Aeia watches from the tower window and mouths for you to come back to her whole.
 	jump end
-She turns as you reach the top of the cracked steps. You are leaving with him, she says quietly. She can see it on you already.
-- I will be back before the banners are hung.
-	She almost smiles. You had better be. She has no intention of marrying a ghost.
-- Come join us down by the shore.
-	Someone has to keep this village standing while the men play at heroes, she says. She will be here when you return.
-She reaches out, squeezes your hand once, and tells you to be careful out there.
+She turns as you reach the top of the cracked steps. "You are leaving with him," she says quietly. She can see it on you already.
+- "I will be back before the banners are hung."
+	She almost smiles. "You had better be. I have no intention of marrying a ghost."
+- "Come join us down by the shore."
+	"Someone has to keep this village standing while the men play at heroes," she says. "I will be here when you return."
+She reaches out and squeezes your hand once. "Be careful out there."
 [signal arg="set_flag act1/said_farewell"]
 label end

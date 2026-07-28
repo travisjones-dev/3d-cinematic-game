@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://2werluli3mvs" path="res://scripts/components/npc_interactable.gd" id="1_npc"]
 [ext_resource type="Script" uid="uid://coutofil5gipv" path="res://scripts/components/zone_exit.gd" id="2_exit"]
 [ext_resource type="Shader" path="res://shaders/soft_dot.gdshader" id="3_softdot"]
+[ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="4_flavor"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.3, 0.32, 0.36, 1)
@@ -126,6 +127,16 @@ size = Vector3(3.5, 3, 3.5)
 [sub_resource type="BoxShape3D" id="ExitTriggerShape"]
 size = Vector3(3, 3, 2)
 
+[sub_resource type="StandardMaterial3D" id="TallyMat"]
+albedo_color = Color(0.11, 0.1, 0.09, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="TallyMesh"]
+size = Vector3(0.06, 0.55, 0.9)
+
+[sub_resource type="BoxShape3D" id="TallyTriggerShape"]
+size = Vector3(2, 3, 2.4)
+
 [sub_resource type="QuadMesh" id="TowerDustMesh"]
 size = Vector2(0.5, 0.5)
 
@@ -194,6 +205,7 @@ surface_material_override/0 = SubResource("StoneMat")
 [node name="Collision" type="CollisionShape3D" parent="Geometry/NorthWall" unique_id=1390148349]
 shape = SubResource("WallLongShape")
 
+
 [node name="EastWall" type="StaticBody3D" parent="Geometry" unique_id=2073135382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4.9, 0)
 
@@ -213,6 +225,11 @@ surface_material_override/0 = SubResource("StoneMat")
 
 [node name="Collision" type="CollisionShape3D" parent="Geometry/WestWall" unique_id=1435387790]
 shape = SubResource("WallSideShape")
+
+[node name="Tally" type="MeshInstance3D" parent="Geometry/WestWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23, -3.7, 0.2)
+mesh = SubResource("TallyMesh")
+surface_material_override/0 = SubResource("TallyMat")
 
 [node name="Window" type="MeshInstance3D" parent="Geometry/WestWall" unique_id=1627340438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 2.6, 0)
@@ -1044,18 +1061,27 @@ material_override = SubResource("TowerDustMat")
 [node name="Interactables" type="Node3D" parent="." unique_id=1798069414]
 
 [node name="Aeia" type="Area3D" parent="Interactables" unique_id=777063987]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 9.9, -1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1418097, 9.9, 0.1561785)
 script = ExtResource("1_npc")
 timeline = "res://dialogue/act1/love.dtl"
 prompt = "Speak with Aeia"
 
 [node name="Mesh" type="MeshInstance3D" parent="Interactables/Aeia" unique_id=2146903078]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9418097, 0, 1.6561785)
 mesh = SubResource("NpcMesh")
 surface_material_override/0 = SubResource("LoveMat")
 
 [node name="Trigger" type="CollisionShape3D" parent="Interactables/Aeia" unique_id=1753897263]
 shape = SubResource("AeiaTriggerShape")
+
+[node name="WatchmanTally" type="Area3D" parent="Interactables"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 0.2)
+script = ExtResource("4_flavor")
+prompt = "Examine the scratches in the stone"
+flavor_text = "Scratches in the stone, low down where a man would sit with his back to the wall. Rows of five, tallied and crossed, and then a long gouge where the counting stopped."
+discovers_flag = "act1/found_watchman_tally"
+
+[node name="Trigger" type="CollisionShape3D" parent="Interactables/WatchmanTally"]
+shape = SubResource("TallyTriggerShape")
 
 [node name="ExitToVillage" type="Area3D" parent="." unique_id=1633104318]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 3.4)
