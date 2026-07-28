@@ -90,15 +90,15 @@ for every warning above.
   `travisjones-dev/3d-cinematic-game` **exists and is private**. Note a 112 MB binary does not belong
   in git history; attach it to a *Release*, never commit it (`build/` is gitignored).
 
-### ⚠️ Two GitHub accounts are authenticated — git must be acting as the right one
+### Two GitHub accounts are authenticated — this one is the default
 `gh auth status` shows both `travisjonesphoenix` (Phoenix work) and `travisjones-dev` (personal, owns
-this repo). **This project lives under `travisjones-dev`.** If the active account is the work one,
-git cannot see this private repo and reports a misleading `Repository not found` — it is an auth
-problem, not a missing remote. Before pushing or cutting a release:
+this repo). **Since 2026-07-28 `travisjones-dev` is the default active account**, so pushing and
+cutting releases here needs nothing special.
 
-```powershell
-gh auth switch --user travisjones-dev
-```
+The inverse now applies: the **Phoenix work repos need** `gh auth switch --user travisjonesphoenix`,
+and will fail with the same misleading `Repository not found` if you forget — they are private too, and
+GitHub answers "not found" rather than "no access" for a private repo the active account can't see.
+Any `Repository not found` on either side is an **auth** problem, not a missing remote.
 
 Do **not** try to fix this by putting the username in the remote URL
 (`https://travisjones-dev@github.com/...`). That forces a user the active credential helper may not

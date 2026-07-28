@@ -120,12 +120,12 @@ Channels: **itch.io** password-protected draft page (link, download counts, upda
 re-sending), a zip via Drive/WeTransfer, or **GitHub Releases** — attach the binary to a Release,
 never commit it (`build/` is gitignored and a 112 MB blob does not belong in git history).
 
-**Before pushing or cutting a release, check which GitHub account git is acting as.** Two are
-authenticated — `travisjonesphoenix` (work) and `travisjones-dev` (personal, owns this private repo).
-With the wrong one active, git reports a misleading `Repository not found`; it is an auth problem, not
-a missing remote. Run `gh auth switch --user travisjones-dev`. Do not "fix" it by embedding the
-username in the remote URL — that makes git **hang** on a credential prompt rather than fail fast.
-See `docs/BUILD.md`.
+**Account note:** two GitHub accounts are authenticated — `travisjonesphoenix` (Phoenix work) and
+`travisjones-dev` (personal, owns this private repo). Since 2026-07-28 **`travisjones-dev` is the
+default**, so this repo pushes with no ceremony. If a push ever fails with `Repository not found`,
+that is an **auth** problem, not a missing remote — check `gh auth status` and switch back. Never
+"fix" it by embedding the username in the remote URL; git then **hangs** on a credential prompt
+instead of failing fast. See `docs/BUILD.md`.
 
 ## What testers must be told, or they will bounce
 
