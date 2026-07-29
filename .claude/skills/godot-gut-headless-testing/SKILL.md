@@ -195,7 +195,8 @@ and excluding the shore did not either. Instead pick the right tool:
 
 - Validating **authored scene data** (positions, shapes, node structure)? Don't instantiate at all —
   read the `.tscn` via `PackedScene.get_state()` and compose transforms by multiplication. Fast,
-  exact, no renderer. Harness in `godot-playable-space-audit`.
+  exact, no renderer. Harness in `godot-playable-space-audit` — **read its `./`-prefix warning before
+  hardcoding any node path**, or your test fails claiming the node is missing when the scene is fine.
 - Genuinely need **physics** (can the player stand here, can they be shoved)? Instantiate a *single*
   zone plus the player — `test_tower_stairs.gd`, `test_tower_doorway.gd` and `test_tower_secret.gd`
   all do this successfully. Looping several zones in one test is what tipped it over.

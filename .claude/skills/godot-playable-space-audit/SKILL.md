@@ -126,7 +126,7 @@ func _read_scene(path: String) -> Dictionary:
     var state: SceneState = (load(path) as PackedScene).get_state()
     var nodes: Dictionary = {}
     for i in range(state.get_node_count()):
-        var node_path: String = String(state.get_node_path(i))   # root is "."
+        var node_path: String = String(state.get_node_path(i))   # "." for root, "./Geometry/Floor" for children
         var entry: Dictionary = {"transform": Transform3D.IDENTITY, "has_script": false, "shape": null}
         for j in range(state.get_node_property_count(i)):
             match state.get_node_property_name(i, j):
@@ -147,6 +147,40 @@ func _global_of(nodes: Dictionary, path: String) -> Transform3D:
             acc = acc * ((nodes[walked] as Dictionary)["transform"] as Transform3D)
     return acc
 ```
+
+### ⚠️ Keys carry a leading `./` — this bites the moment you hardcode a path
+
+`get_node_path()` returns `.` for the root but **`./Geometry/Floor`** for every child, so the
+dictionary keys are `./`-prefixed. `test_interaction_alignment.gd` never trips on this because it
+only ever *iterates its own keys* and appends (`path + "/Trigger"`), which stays self-consistent
+whatever the prefix is. The first test that **hardcodes** a lookup gets a silent miss:
+
+```gdscript
+nodes.has("Geometry/Ceiling")      # false — always, however correct the scene is
+nodes.has("./Geometry/Ceiling")    # true
+```
+
+It fails as *"the node is missing"*, which reads exactly like the scene bug you are testing for — so
+the instinct is to go re-check the `.tscn`, where everything looks fine. Cost a full red run on
+`test_tower_roof.gd` (2026-07-29). Put the prefix in a `const` so it cannot drift:
+
+```gdscript
+const CEILING: String = "./Geometry/Ceiling"
+```
+
+**If a `SceneState` lookup says a node is absent, print the real keys before believing it** — a
+throwaway `-s` script that dumps `get_node_path(i)` for every node settles it in one run. (A bare
+`SceneTree` script is fine here: loading resources and reading `SceneState` works even though live
+`global_position` reads all-zero — see `godot-gut-headless-testing`.)
+
+Two more things that make these assertions lie rather than fail loudly:
+
+- **Compare flush geometry with an epsilon.** Anything authored to sit exactly flush serialises
+  through float32: a wall top at `9.8` reads back as `10.2000007629395` once composed, so
+  `assert_lte(top, 9.8)` fails on rounding, not on a gap. Use `9.8 + 0.01`.
+- **Rotations can be negative.** Asserting a *signed* euler component fails on the sign when the
+  authored lean happens to run the other way (the village crown leans **−9.85°**). Compare
+  `absf(euler.z)` unless the direction is genuinely what you mean to pin down.
 
 From there, build each `<node>/Trigger`'s world AABB and assert:
 

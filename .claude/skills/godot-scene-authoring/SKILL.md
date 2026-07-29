@@ -172,6 +172,36 @@ surface_material_override/0 = SubResource("Mat")
 ```
 `surface_material_override/0` targets the first surface (a BoxMesh/CapsuleMesh has one).
 
+### ⚠️ A primitive's inside face is INVISIBLE — you cannot roof a room with a cone
+
+Primitive normals point **outward**, and `StandardMaterial3D` culls back faces by default. So a
+`CylinderMesh` cone placed over a room as a roof renders **nothing at all** from inside — you look
+straight through it at the sky. Same for a sphere as a dome, or a box used as a room shell. The mesh
+is there, the scene is correct, and the room is still open to the void.
+
+This is a trap because the shape looks right from every angle *except* the one the player occupies,
+and a headless run cannot see it — `--import`, GUT and a boot all pass clean.
+
+Choosing a fix, cheapest first:
+
+1. **Use a flat slab as the interior surface and put the shape on top of it.** A `BoxMesh` ceiling has
+   a genuine downward-facing face with correct normals and correct lighting, and the cone above it
+   becomes pure exterior silhouette. No culling subtleties, nothing to verify visually. This is what
+   `zone_01_tower_interior.tscn` does (`Geometry/Ceiling` at y=12.8 under `Geometry/RoofCone`).
+2. **`cull_mode = 2`** (Disabled/two-sided) renders both faces — but the interior side is lit by an
+   outward-facing normal, so it can render near-black and read as the same void you were fixing.
+3. **A second nested mesh with a negative scale** (e.g. `Transform3D(-1, 0, 0, …)`) flips winding so
+   normals face inward. Correct, but it is two nodes and its lighting cannot be confirmed headlessly.
+
+Reach for (2) or (3) only when the sloped underside genuinely has to be seen; otherwise (1) wins.
+
+**`cap_bottom`/`cap_top` do not rescue this.** Turning the base cap *on* gives a flat disc at the
+cone's widest point — a ceiling at the *bottom* of the slope, usually far lower than intended (it
+would have landed 0.2 m above head height in the tower) and it slices through the surrounding walls.
+
+**Rule of thumb:** before using any primitive as an interior surface, ask which way its normals face
+at the spot the camera will be. If the camera is inside the solid, you will see nothing.
+
 ## Environment/lighting quickstart (so a scene renders as more than black)
 `WorldEnvironment` + an `Environment` with a procedural sky gives instant ambient + sky:
 
