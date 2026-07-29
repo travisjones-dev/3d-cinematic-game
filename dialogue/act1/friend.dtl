@@ -2,13 +2,13 @@ if GameState.get_flag("act1/ready_to_leave") == true:
 	Your friend waits at the village edge, sword slung over his shoulder, and waves you on toward the trees.
 	jump end
 if GameState.get_flag("act1/said_farewell") == true:
-	He grins as you climb back down. "Said your goodbyes, then? Good. Let us not waste the light."
+	He grins as you climb back down. "Said your goodbyes, then? Good. Let us make our way." It's tradition for newly made knights to visit the shore and pray to the old gods.
 	[signal arg="set_flag act1/ready_to_leave"]
 	jump end
 if GameState.get_flag("act1/talked_to_friend") == true:
 	He nods his head toward the old tower. "Aeia is still up there, waiting. Go on."
 	jump end
-Your oldest friend claps a hand on your shoulder, grinning wide. "Walk with me down to the shore, like when we were children?"
+Your oldest friend claps a hand on your shoulder, grinning wide. "It's time for us to walk down to the shore, and get our blessing from the gods."
 - "Race you there."
 	He laughs, bright and easy, and swears you will be eating his dust before the treeline.
 - "Lets stay close out there. Elder Mishka said a thick mist is creeping in."

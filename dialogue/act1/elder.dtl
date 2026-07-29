@@ -1,8 +1,8 @@
 if GameState.get_flag("act1/talked_to_elder") == true:
 	Elder Mishka has not moved from her bench. She is watching the north road, where the mist has thickened into a low white wall. "Go on, child. But keep your eyes on the water."
 	jump end
-Elder Mishka looks up from her bench and her whole face creases into a smile. "There he is. The boy who used to steal my honey cakes, grown tall enough to carry a sword."
-She takes your hand in both of hers, and her smile fades by a degree. "A thick mist is rolling in off the water. Strong and low, the kind that swallows a man's own feet. It came up too fast to be weather."
+Elder Mishka looks up from her bench and her face creases into a warm smile. "There he is. The boy who used to steal my honey cakes, grown tall enough to carry a sword."
+She takes your hand in both of hers, and her smile fades. "A thick mist is rolling in off the water. Strong and low, it came up too fast to be weather."
 - "It is only the season, grandmother."
 	She pats your hand, kindly, and does not agree with you.
 - "You sound afraid."
