@@ -18,7 +18,7 @@ sky_material = SubResource("SkyMat")
 background_mode = 2
 sky = SubResource("Sky")
 ambient_light_source = 3
-ambient_light_energy = 0.35
+ambient_light_energy = 0.5
 tonemap_mode = 2
 glow_enabled = true
 glow_intensity = 0.4
@@ -82,6 +82,30 @@ size = Vector3(2.1, 2.6, 0.2)
 
 [sub_resource type="BoxShape3D" id="SouthDoorShape"]
 size = Vector3(2.1, 2.6, 0.2)
+
+[sub_resource type="BoxMesh" id="WallExtLongMesh"]
+size = Vector3(8, 2.8, 0.4)
+
+[sub_resource type="BoxShape3D" id="WallExtLongShape"]
+size = Vector3(8, 2.8, 0.4)
+
+[sub_resource type="BoxMesh" id="WallExtSideMesh"]
+size = Vector3(0.4, 2.8, 8)
+
+[sub_resource type="BoxShape3D" id="WallExtSideShape"]
+size = Vector3(0.4, 2.8, 8)
+
+[sub_resource type="StandardMaterial3D" id="RoofMat"]
+albedo_color = Color(0.5, 0.34, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="CeilingMesh"]
+size = Vector3(8.4, 0.4, 8.4)
+
+[sub_resource type="CylinderMesh" id="RoofConeMesh"]
+top_radius = 0.0
+bottom_radius = 6.0
+height = 5.0
 
 [sub_resource type="BoxShape3D" id="CornerFillShape"]
 size = Vector3(1.2, 3.3335295, 1.2)
@@ -176,8 +200,8 @@ omni_range = 6.0
 [node name="TopGlow" type="OmniLight3D" parent="Lighting" unique_id=1311181090]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 10.5, -1.0)
 light_color = Color(0.95, 0.88, 0.72, 1)
-light_energy = 0.6
-omni_range = 4.0
+light_energy = 1.5
+omni_range = 9.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=1884856666]
 environment = SubResource("Env")
@@ -275,6 +299,56 @@ surface_material_override/0 = SubResource("DoorMat")
 
 [node name="Collision" type="CollisionShape3D" parent="Geometry/SouthDoor"]
 shape = SubResource("SouthDoorShape")
+
+[node name="NorthWallUpper" type="StaticBody3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.2, -4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/NorthWallUpper"]
+mesh = SubResource("WallExtLongMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/NorthWallUpper"]
+shape = SubResource("WallExtLongShape")
+
+[node name="SouthWallUpper" type="StaticBody3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.2, 4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthWallUpper"]
+mesh = SubResource("WallExtLongMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/SouthWallUpper"]
+shape = SubResource("WallExtLongShape")
+
+[node name="EastWallUpper" type="StaticBody3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 11.2, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EastWallUpper"]
+mesh = SubResource("WallExtSideMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/EastWallUpper"]
+shape = SubResource("WallExtSideShape")
+
+[node name="WestWallUpper" type="StaticBody3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 11.2, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/WestWallUpper"]
+mesh = SubResource("WallExtSideMesh")
+surface_material_override/0 = SubResource("StoneMat")
+
+[node name="Collision" type="CollisionShape3D" parent="Geometry/WestWallUpper"]
+shape = SubResource("WallExtSideShape")
+
+[node name="Ceiling" type="MeshInstance3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.8, 0)
+mesh = SubResource("CeilingMesh")
+surface_material_override/0 = SubResource("RoofMat")
+
+[node name="RoofCone" type="MeshInstance3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15.5, 0)
+mesh = SubResource("RoofConeMesh")
+surface_material_override/0 = SubResource("RoofMat")
 
 [node name="CornerFillNE" type="StaticBody3D" parent="Geometry" unique_id=1239293305]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 4.9, -3.2)

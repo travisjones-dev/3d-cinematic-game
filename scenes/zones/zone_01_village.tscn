@@ -148,6 +148,11 @@ size = Vector3(3.5, 9, 3.5)
 [sub_resource type="BoxMesh" id="TowerTopMesh"]
 size = Vector3(3, 2.5, 3)
 
+[sub_resource type="CylinderMesh" id="TowerRoofMesh"]
+top_radius = 0.0
+bottom_radius = 2.15
+height = 1.8
+
 [sub_resource type="BoxMesh" id="CrackMeshEast"]
 size = Vector3(0.25, 6, 0.15)
 
@@ -368,6 +373,11 @@ shape = SubResource("TowerShape")
 transform = Transform3D(0.98, 0.17, 0, -0.17, 0.98, 0, 0, 0, 1, 0.4, 5.5, 0.2)
 mesh = SubResource("TowerTopMesh")
 surface_material_override/0 = SubResource("TowerStoneMat")
+
+[node name="Roof" type="MeshInstance3D" parent="Geometry/GuardTower/CrackedTop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+mesh = SubResource("TowerRoofMesh")
+surface_material_override/0 = SubResource("RoofMat")
 
 [node name="Crack" type="MeshInstance3D" parent="Geometry/GuardTower"]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 1.8, 0, 0.3)
