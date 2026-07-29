@@ -25,11 +25,6 @@ glow_intensity = 0.4
 glow_bloom = 0.1
 glow_hdr_threshold = 0.95
 glow_blend_mode = 2
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.03
-volumetric_fog_albedo = Color(0.7, 0.65, 0.55, 1)
-volumetric_fog_anisotropy = 0.4
-volumetric_fog_length = 24.0
 
 [sub_resource type="BoxMesh" id="FloorMesh"]
 size = Vector3(8, 0.5, 8)
