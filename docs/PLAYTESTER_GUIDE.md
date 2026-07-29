@@ -36,6 +36,18 @@ The game opens in a window and you will be standing in a village.
 
 ---
 
+## Before you play: this is an early build
+
+This is a **story test, not a look test.** The real art has not been made yet —
+people are capsules, buildings are boxes, and nearly everything you see is a simple
+placeholder shape standing in for the real thing.
+
+**So a lot of it will look plain, unfinished, or frankly silly. That is expected and
+already known.** What is being tested is whether the world and the story pull you
+in — not whether it looks good yet.
+
+---
+
 ## Controls
 
 | What | How |
@@ -68,19 +80,22 @@ even if you do not reach the end.
 
 ## What would really help to hear back
 
-The most useful thing by far:
+There is a short **anonymous** feedback form. It asks for no name, and nothing is
+sent or saved anywhere — at the end it just formats your answers as text on your own
+screen for you to copy and send back however is easiest.
 
-> ### Any question that came into your head about this world — even one you think is silly.
-> "Who is Aeia?" "Why is the tower cracked?" "What happened to the last watchman?"
-> **Please write these down as they occur to you.** They matter more than bug reports.
+> ### 👉 https://claude.ai/code/artifact/c3d640b1-3b27-437a-b12b-1b6ca15dc5e2
 
-Also helpful, in rough order:
+The single most useful thing on it, by a wide margin:
 
-1. **Where did you get confused, lost, or stuck?**
-2. **Did you want to know what happens next?** Honest answer, including if the answer is no.
-3. Anything that looked broken, ugly, or wrong.
-4. Anything you tried to do that the game would not let you do.
-5. Roughly how long did you play?
+> ### Any question about this world that came into your head — even one you think is silly.
+> **Please jot these down as they occur to you, while you are playing.** They are easy to
+> forget afterwards, and they matter more than bug reports.
+
+The form also asks where you got lost, whether you wanted to know what happens next,
+and whether anything seemed broken. Filling it in is ideal because it stays anonymous,
+but if you would rather just talk it through, that is fine too — the answers matter
+more than the format.
 
 Blunt feedback is more useful than kind feedback. "I had no idea where to go" is a gift.
 
