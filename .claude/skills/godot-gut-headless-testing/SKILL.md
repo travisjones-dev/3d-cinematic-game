@@ -47,17 +47,43 @@ with this error and a list of missing `Gut*` classes. It is NOT a broken install
 import cache is empty. Run Step 1 (`--import`) once and it resolves. The editor does
 this automatically on open, which is why it only bites headless-first runs.
 
-### Gotcha: the "N Orphans" line is (almost always) not your code
-GUT's summary reports orphan nodes. On this project that count comes from the **Dialogic
-autoload** spawning subsystem nodes at startup, not from test code. Confirm before
-chasing it: run a single test that touches no scenes and see if the count is unchanged —
+### Gotcha: the "N Orphans" line is (almost always) not your code — but it IS a real leak
+An orphan is a Node alive but not in the scene tree. Nodes aren't reference-counted (only
+`RefCounted`/`Resource` are), so an unparented, unfreed Node leaks for the process lifetime.
+GUT reports the count because a *rising* count is the clearest memory-leak signal in a test.
+
+On this project the baseline is **exactly 24, all Dialogic's**. Don't repeat the mistake of
+recording "not a leak" — they genuinely leak; they're just bounded and harmless. Knowing the
+real cause is what lets you say instantly whether 27 means three of *yours*.
+
+Cause: a static-typing idiom in `addons/dialogic/Core/DialogicGameHandler.gd` (~line 105+),
+once per subsystem —
+
+```gdscript
+var Animations := preload("res://addons/dialogic/Modules/Core/subsystem_animation.gd").new():
+	get: return get_subsystem("Animations")
+```
+
+The `.new()` exists only so `:=` infers a static type; the getter never returns it, always
+redirecting to the real subsystem that `_collect_subsystems()` parents to the autoload. The
+allocated node is unreachable immediately and never freed. **18** such properties **+ 6** nodes
+those orphaned copies allocate themselves (2× `Node` in `subsystem_audio.gd:23,25`; `Timer` in
+`subsystem_choices.gd:41`, `subsystem_input.gd:23`, `subsystem_save.gd:468`; `AudioStreamPlayer`
+in `subsystem_voice.gd:41`) = **24**, printed in that order.
+
+Confirm the baseline before chasing anything — run a single test that touches no scenes:
 
 ```powershell
 & $godot --headless --path $proj -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/test_game_state.gd -gexit
 ```
 
-If orphans are identical to the full run, it's the addons — ignore it. Only investigate
-if the number *grows* when you add scene-based tests (that would be a real leak).
+Unchanged at 24 → it's the addon; ignore. **Above 24 → the excess is yours, investigate.**
+Standard for our code is zero: `autofree()` / `add_child_autofree()`, or free explicitly.
+
+**Method note (how this was found):** the earlier version of this section said "not a leak,"
+inherited as a conclusion with the reasoning lost. Four greps over `addons/dialogic/` turned a
+vague label into exact arithmetic. When a documented-noise entry only records the *verdict*, the
+reasoning rots and "documented" quietly decays into "dismissed" — always write down the mechanism.
 
 ## Writing tests — patterns that hold up
 

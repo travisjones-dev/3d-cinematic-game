@@ -2,6 +2,24 @@
 
 Carry this into the next session. Kept current so a fresh session can resume without re-deriving state.
 
+## Documented noise — every shutdown message attributed (2026-08-12)
+Ground-truth checks re-run 2026-08-12: `--import` exit 0, **65/65** GUT (17 scripts, 214 asserts, 50.2s), `main.tscn` headless boot exit 0 and **completely silent** — confirming the roof + fog-removal work left no runtime errors on the real load path. Working tree clean, no code changed.
+
+The point of this section: **a noisy baseline carries no information.** Attribute every line once, then anything *new* is a genuine signal. Each entry below records the *mechanism*, not just the verdict — a verdict alone rots, and "documented" quietly decays into "dismissed."
+
+| Message | Where | What it actually is |
+|---|---|---|
+| `24 Orphans` | GUT summary | Dialogic's leaked static-typing nodes. **Real leaks**, but bounded/constant/not ours. Exact 18+6 arithmetic in `tests/README.md`. **Exactly 24 is the baseline — above it, the excess is ours.** |
+| `N resources still in use at exit` | shutdown | Largely downstream of the orphans: each unfreed Node holds its script, and a script is a `Resource`, so the cache can't drain. Generally also caused by **reference cycles** (A→B→A, refcount never hits 0) — easy to create with interlinked `.tres`. |
+| `ObjectDB instances leaked at exit` | shutdown | Same family, one level up: Godot's global object registry still holds the unfreed objects. |
+| `RID allocations of type ...DummyTexture` / `Pages in use exist at exit in PagedAllocator` | shutdown, `--import` only | Lowest level — RIDs are handles into the rendering server, and headless uses a stub "dummy" renderer. |
+| `sidebar.gd:507` `current_resource` on Nil | during `--import` | **Not a leak, different in kind.** `--import` boots the *editor* headlessly, which restores the saved layout, which reopens the Dialogic timeline tab before a current editor exists. `addons/dialogic/Editor/` code — it cannot run in a shipped game. |
+| `SaveManager: no save at slot 99` | during tests | **Ours, and deliberate** — `test_load_missing_slot_returns_empty` proving the missing-save path warns instead of crashing. The warning appearing there is the test working. |
+
+**Why none of these fail the run, despite GUT failing a test on *any* engine error:** they occur at *shutdown*, after GUT has finished and reported. Timing is what separates noise from failure — the identical message mid-test would be a red run. That asymmetry is why a shutdown message is safe to whitelist and an in-test one never is.
+
+**Godot memory model, the reason any of this exists:** `RefCounted` (incl. every `Resource`) frees itself when the last reference drops. **`Node` and plain `Object` are manual** — `free()`/`queue_free()`, or parent it and let the tree free it. A Node created and never parented is yours forever. Standard for our own code is **zero orphans** (`autofree()` / `add_child_autofree()`).
+
 ## Status (updated 2026-07-29) — tower roofed, fog removed, playtest survey live
 **Pushed and in sync: `origin/master` = `4313f28`.** Four commits this session. Suite **62 → 65**, all green; `--import`, `main.tscn` boot, and the exported `.exe` boot all exit 0.
 
@@ -176,7 +194,7 @@ The two gotchas above (cone underside invisible from inside; `SceneState` leadin
 - **Interaction** — `scripts/components/interactable.gd` (class_name Interactable, Area3D + prompt + `interacted`, announces on EventBus) and `zone_exit.gd` (composes it → SceneDirector.change_zone). HUD prompt in `scenes/ui/hud.tscn`.
 - **Pause/save/load** — `scenes/ui/pause_menu.tscn` (+ script): Esc opens; Resume/Save/Load/Quit wired to SaveManager (slot 0) + SceneDirector.load_into.
 - **Input** — `project.godot [input]`: move_forward/back/left/right (WASD), run (Shift), interact (E), pause (Esc). E=69, Shift=4194325, Esc=4194305.
-- **Tests** — `tests/` — **65 total, all passing** (49 baseline; 2026-07-27 playtest pass +2 `test_tower_doorway.gd`, +2 `test_village_boundaries.gd`, +5 `test_village_npcs.gd`, +2 `test_interaction_alignment.gd`, +2 `test_tower_secret.gd`; 2026-07-29 +3 `test_tower_roof.gd`). Covers GameState, SaveManager, SceneDirector, Interactable, dialogue bridge, cutscene, quest + `village_quest`, shore, `test_tower_stairs.gd` (the spiral-stair walkability regression — drives the real player up the tower steps), and `test_tower_doorway.gd` (the exit doorway is sealed — drives the player at it and asserts no fall). Run command + gotchas in `tests/README.md`. The ~24 "Orphans" are Dialogic startup nodes, not leaks.
+- **Tests** — `tests/` — **65 total, all passing** (49 baseline; 2026-07-27 playtest pass +2 `test_tower_doorway.gd`, +2 `test_village_boundaries.gd`, +5 `test_village_npcs.gd`, +2 `test_interaction_alignment.gd`, +2 `test_tower_secret.gd`; 2026-07-29 +3 `test_tower_roof.gd`). Covers GameState, SaveManager, SceneDirector, Interactable, dialogue bridge, cutscene, quest + `village_quest`, shore, `test_tower_stairs.gd` (the spiral-stair walkability regression — drives the real player up the tower steps), and `test_tower_doorway.gd` (the exit doorway is sealed — drives the player at it and asserts no fall). Run command + gotchas in `tests/README.md`. The 24 "Orphans" are Dialogic's own leaked type-hint nodes — real leaks, but bounded/constant/not ours; full arithmetic in `tests/README.md`.
 - **Project skills** (`.claude/skills/`) capturing hard-won workflow + gotchas: `godot-addon-install`, `godot-gut-headless-testing`, `godot-scene-authoring`, `godot-phantom-camera`, `godot-thirdperson-controller`, `godot-input-map`, `godot-interaction-system`, `godot-pause-menu`, `godot-dialogic-integration`, `godot-cutscene-tech`, `godot-quest-system`, `godot-zone-building`, `godot-multisegment-terrain` (stairs/ramps without capsule seam-freezes — safe_margin, solid core, corner fillers), `godot-hud-feedback` (transient toasts/narration — token-guard, fade, readability), **`godot-playable-space-audit`** (NEW 2026-07-28 — the "visible but unusable / walkable but shouldn't be" bug class: unsealed press-E exits, last-entered-wins prompts, mesh drifted outside its own trigger, headroom under the spiral, plus the SceneState+AABB test harness), **`godot-export-playtest-build`** (NEW 2026-07-28 — export templates, `export_presets.cfg`, verifying the exported binary boots, and the Forward+/web volumetric-fog trap).
 
 ### Skills pass (2026-07-28) — two new skills, and THREE corrections to existing ones
@@ -201,7 +219,7 @@ Distilled from the 2026-07-27 playtest round. The corrections matter more than t
 ## Watch-items for later
 - **Village → shore scoping** (Phase D): the opening cutscene fires at the shore, but Zone 01 is the village. Decide one long zone vs. two connected zones when we reach content. Leaning two zones (reuses the transition tech; shore gets its own colder mood).
 - **Dialogic ↔ GameState flag bridge** and **Phantom Camera + Dialogic cutscene timing** are still the riskiest integrations — Phase C spikes, before any content.
-- The ~24 "Orphans" in test output are Dialogic's startup nodes, not our code (documented in tests/README.md).
+- The 24 "Orphans" in test output are Dialogic's own leaked static-typing nodes — genuinely leaked, but bounded, constant, and not our code. Cause + exact 18+6 arithmetic in `tests/README.md`; baseline is **exactly 24**, so anything above it is ours.
 
 ## How to resume
 1. ~~Load the Godot MCP first~~ — **confirmed live 2026-07-21** (see *Dev tooling* above). If a future session can't find `mcp__godot__*` tools, it means MCP tools weren't injected at session start (needs a fresh session) or `/mcp` no longer shows `godot` connected — re-run the smoke test (`get_godot_version` → `get_project_info`) to confirm.
@@ -212,7 +230,7 @@ Distilled from the 2026-07-27 playtest round. The corrections matter more than t
    & $GODOT --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit  # expect 65/65
    & $GODOT --headless --path . res://scenes/main.tscn --quit-after 180                      # expect exit 0, no errors
    ```
-   Expect **65/65** as of 2026-07-29 (was 62; +3 `test_tower_roof.gd`). Ignore at shutdown: `ObjectDB instances leaked`, `26 resources still in use`, `24 Orphans` (all Dialogic autoload), and the Dialogic `sidebar.gd:507` editor-layout error during `--import`.
+   Expect **65/65** — re-verified 2026-08-12, all three checks exit 0. Ignore at shutdown: `ObjectDB instances leaked`, `26 resources still in use`, `24 Orphans`, and the Dialogic `sidebar.gd:507` editor-layout error during `--import`. **Every one of those is attributed** — see "Documented noise" below. `24 Orphans` is an exact baseline, not an approximation: above 24 means the excess is ours.
 3. ~~Human playtest~~ — **all confirmed good, 2026-07-21** (tower climb + reaching the top, no tower-corner fall, camera framing, dialogue toast timing, quest-toast readability, the 6 village fixes' visual pass). ~~Writing pass~~ — **complete, 2026-07-21**, including the Elin → Aeia rename.
 4. **Where the slice stands (2026-07-29):** all three zones exist and are wired — village (`zone_01_village`), enterable and now **roofed** tower (`zone_01_tower_interior`), shore (`zone_02_shore`) with the opening cutscene; dialogue/quest/cutscene/HUD tech all in and tested; narrative text is final (human writing pass through 2026-07-29); atmosphere signed off at graybox fidelity, and the tower's post-roof lighting signed off separately 2026-07-29; a distributable Windows build, a non-technical playtester guide, and an anonymous feedback survey all exist (`docs/BUILD.md`, `docs/PLAYTESTER_GUIDE.md`, plus the artifact URL above). **ONE thing remains before Milestone 1 is done: the friend playtest** — a real person plays ~10 min, and you log every unprompted world question (ROADMAP Phase E, pure human task).
    - Build to hand out: `build/vertical-slice-playtest.zip` (39.3 MB, rebuilt 2026-07-29). **`build/` is gitignored, so it exists only on this machine** — rebuild per `docs/BUILD.md` after any code change, or testers play a stale build.
