@@ -18,8 +18,11 @@ assets/
   which breaks the reproducibility rule and any headless/CI run. `.glb` imports with
   no external dependency at all.
 - **`assets/source/` contains a `.gdignore`** so Godot never tries to import the
-  `.blend` files. Without it, Godot attempts a Blender conversion and errors when
-  Blender isn't configured. Do not delete that file.
+  `.blend` files. **Since Blender was installed (2026-08-13) this file is
+  load-bearing:** the direct-`.blend` conversion now *succeeds* on this machine
+  instead of failing, so nothing but `.gdignore` stops a machine-specific import
+  path sneaking in that would break every other clone and any headless run.
+  Verified holding 2026-08-13. Do not delete that file.
 - **`.import` sidecars are plain text and ARE committed.** They carry the import
   settings, so an art swap stays reproducible even though the asset is binary.
 - **Swaps touch `MeshInstance3D` only — NEVER `CollisionShape3D`.** Collision is
@@ -39,3 +42,8 @@ assets/
 The palette is already established by the shipped materials — hearth gold against
 the shore's cold desaturation. `docs/ART_PIPELINE.md` §4 lists all 12 values.
 Honour it rather than replacing it.
+
+⚠️ **Enter palette colours in Blender via the HEX field, not the decimal values.**
+Godot's `albedo_color` is sRGB; Blender's Base Color is linear. Typing the decimal
+numbers in makes assets render ~10× too bright. §4 has a hex column; §10 has the
+full explanation and the measured proof.

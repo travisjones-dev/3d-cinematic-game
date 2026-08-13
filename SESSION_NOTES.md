@@ -18,7 +18,15 @@ The friend playtest (ROADMAP Phase E) was **closed on user instruction**, and wi
 
 **Phase 0 complete and verified** (`--import` exit 0, **65/65** tests, orphans exactly 24): LFS initialised **`--local`** so the work laptop's global git config stays clean; `.gitattributes` scoped to `assets/` so the addon PNGs already in history are left alone; `assets/models/` + `assets/source/`; **`.gdignore` in `source/`** so Godot never attempts a Blender conversion of `.blend` files; CLAUDE.md amended; `assets/README.md` written.
 
-**Next: Phase 1 — prove the pipeline with ONE throwaway asset** (a Blender cube through export → import → swap the anvil → verify scale/axis/pivot). Deliberately before any real modeling, to catch Y-up/Z-up flips and metre-scale errors on something disposable. **User action required first: install Blender.**
+**Phase 1 COMPLETE (2026-08-13) — the pipeline is proven end to end.** Blender **5.2.0 LTS** installed at `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe` (**not on PATH**; invoke by full path). A 1 m cube went `.blend` → `.glb` → Godot import → anvil swap → tests → boot: **identity node transform** (no baked axis correction), AABB exactly 1 m, base pivot, materials preserved, 65/65 tests, orphans 24, clean boot. LFS routing confirmed (`.glb`/`.blend` → LFS, `.import` stays plain text). Anvil reverted to graybox; `smoke_cube.glb` kept as a reference import.
+
+⚠️ **The finding that justified the phase — a colour-space error, now corrected.** `ART_PIPELINE.md` §4 called the palette "Godot linear". **It is sRGB.** Blender's Base Color and glTF's `baseColorFactor` are *linear*, so copying those decimals into Blender renders assets **~10× too bright** — plausible-looking palette drift that would only have surfaced after the village was built. **Enter palette colours via Blender's HEX field**; §4 now has a hex column, §10 the measured proof. Geometry was never the risk here; colour was.
+
+Two more carried forward: **`tools/blender/export_glb.py`** pins export settings (GUI equivalents in §10), and **`assets/source/.gdignore` is now load-bearing** — with Blender installed, Godot's forbidden direct-`.blend` import *succeeds* rather than failing, so only that file blocks a machine-specific path entering the build. Verified still holding.
+
+**Pivot gotcha for Phase 2:** graybox `BoxMesh` is centre-pivoted, imported assets are base-pivoted — drop half the height off Y on every prop swap (anvil went `y = 0.5` → `y = 0`).
+
+**Next: Phase 2 — environment art.** One building type first, verified end to end, before the rest. User authors in Blender; Claude integrates. Blender MCP servers were considered and **declined** for the pipeline (they drive a live GUI Blender over TCP — the exact editor-only dependency CLAUDE.md forbids, plus unguarded code execution on a work laptop); headless CLI covers it. Revisit only as an interactive authoring aid, outside the committed pipeline.
 
 ⚠️ **Accepted risk, written down before it bites:** `test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** and *will* break as meshes are swapped. They are the guard against the "visible but unusable" bug class — **the wrong fix is loosening assertions until they pass.** Update them deliberately, per asset.
 

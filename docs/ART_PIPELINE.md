@@ -41,13 +41,20 @@ is why "a village full of buildings" is a smaller job than "one convincing perso
 `.glb` bundles mesh + materials + textures + animations in one file.
 
 - `.blend` imports directly **if Blender is installed** (Godot silently calls Blender to convert to glTF).
+  **⚠️ As of 2026-08-13 Blender IS installed on this machine, so this shortcut now works — and must not
+  be used.** It depends on `filesystem/import/blender/blender_path`, an editor-only, machine-specific
+  setting: it would import fine here and fail for everyone else, including any headless run. Until
+  today the rule enforced itself because the conversion simply failed. It no longer does, so
+  `assets/source/.gdignore` is now **load-bearing rather than belt-and-braces**. Do not delete it.
+  (Verified 2026-08-13: with Blender installed, a `.blend` in `assets/source/` still produced no
+  `.import` sidecar — the guard holds.)
 - FBX works via conversion — historically fiddlier, and it handles axis conversion less cleanly.
 - `.obj` is static only: no rig, no animation.
 
 Workflow:
 
-1. Drop `character.glb` into `res://assets/models/`. **`assets/` does not exist yet** — it is not in the
-   CLAUDE.md project structure and would need adding.
+1. Drop `character.glb` into `res://assets/models/`. *(Created in M2 Phase 0; CLAUDE.md's project
+   structure and plain-text rule were amended to match. See `assets/README.md`.)*
 2. Godot auto-imports and writes a **plain-text `.import` sidecar** beside the asset, plus a binary
    cache under `.godot/imported/` (already gitignored).
 3. The `.glb` becomes instanceable as a scene. A character arrives as a `Node3D` containing
@@ -88,27 +95,32 @@ Village ground **44 × 44 m**; stables **9 wide × 6 deep**; tower interior **8 
 tree trunk 0.8 × 4 m with a 3.5 × 3 m canopy; guard tower 3.5 × 9 m.
 
 ### The established colour identity (from the shipped materials)
-This is the game's existing palette — an art bible should honour it, not replace it. Values are Godot
-linear `Color(r, g, b)`.
+This is the game's existing palette — an art bible should honour it, not replace it.
 
-| Material | Value | Reads as |
-|---|---|---|
-| `GroundMat` | 0.46, 0.50, 0.36 | olive-sage grass |
-| `PathMat` | 0.56, 0.48, 0.38 | dry earth path |
-| `WallMat` | 0.72, 0.62, 0.50 | warm plaster/daub |
-| `RoofMat` | 0.50, 0.34, 0.30 | weathered tile |
-| `TowerStoneMat` | 0.55, 0.56, 0.58 | cold grey stone |
-| `DoorMat` | 0.30, 0.20, 0.13 | dark timber |
-| `BannerMat` | 0.86, 0.74, 0.40 | **hearth gold — the village's warm accent** |
-| `FlowerMat` | 0.90, 0.50, 0.62 | wedding-prep pink |
-| `HeartMat` | 0.80, 0.30, 0.36 | the carved heart (emissive, capped 0.4) |
-| `SteedMat` | 0.36, 0.26, 0.20 | horse brown |
-| `AnvilMat` | 0.25, 0.25, 0.28 | iron |
-| `CrackMat` | 0.05, 0.05, 0.05 | the tower's fracture |
+> **⚠️ CORRECTED 2026-08-13 (Phase 1 finding).** This table previously said the values were "Godot
+> linear". **They are sRGB.** Godot's `albedo_color` is sRGB-encoded; Blender's Principled *Base
+> Color* and glTF's `baseColorFactor` are **linear**. Typing these numbers straight into Blender
+> makes every asset render far too bright — `AnvilMat` 0.25 would come out roughly **ten times**
+> lighter than the graybox it replaces. See §10 for how to enter them correctly.
 
-Character placeholder tints, useful as costume direction: Friend `0.50, 0.60, 0.82` (blue), Aeia
-`0.86, 0.60, 0.70` (rose), Elder Mishka `0.60, 0.60, 0.68` (pale grey), Blacksmith
-`0.40, 0.34, 0.34` (soot), Player `0.90, 0.85, 0.30` (yellow).
+| Material | Godot sRGB `Color(r,g,b)` | **Blender hex** (use this) | Reads as |
+|---|---|---|---|
+| `GroundMat` | 0.46, 0.50, 0.36 | `75805C` | olive-sage grass |
+| `PathMat` | 0.56, 0.48, 0.38 | `8F7A61` | dry earth path |
+| `WallMat` | 0.72, 0.62, 0.50 | `B89E80` | warm plaster/daub |
+| `RoofMat` | 0.50, 0.34, 0.30 | `80574D` | weathered tile |
+| `TowerStoneMat` | 0.55, 0.56, 0.58 | `8C8F94` | cold grey stone |
+| `DoorMat` | 0.30, 0.20, 0.13 | `4D3321` | dark timber |
+| `BannerMat` | 0.86, 0.74, 0.40 | `DBBD66` | **hearth gold — the village's warm accent** |
+| `FlowerMat` | 0.90, 0.50, 0.62 | `E6809E` | wedding-prep pink |
+| `HeartMat` | 0.80, 0.30, 0.36 | `CC4D5C` | the carved heart (emissive, capped 0.4) |
+| `SteedMat` | 0.36, 0.26, 0.20 | `5C4233` | horse brown |
+| `AnvilMat` | 0.25, 0.25, 0.28 | `404047` | iron |
+| `CrackMat` | 0.05, 0.05, 0.05 | `0D0D0D` | the tower's fracture |
+
+Character placeholder tints, useful as costume direction (**also sRGB** — same conversion applies):
+Friend `0.50, 0.60, 0.82` (blue), Aeia `0.86, 0.60, 0.70` (rose), Elder Mishka `0.60, 0.60, 0.68`
+(pale grey), Blacksmith `0.40, 0.34, 0.34` (soot), Player `0.90, 0.85, 0.30` (yellow).
 
 The central visual tension to protect: **warm village gold against the shore's cold desaturation.**
 
@@ -241,4 +253,72 @@ engine. Hence this document leading with the mental model rather than tool recom
 6. **Scope**: full art pass, or characters only first? Characters would change the game's read the
    most, and are also the most expensive and the only ones needing animation engineering.
 
-**Nothing in this document has been actioned.** No `assets/` folder, no amendment, no ROADMAP entry.
+~~**Nothing in this document has been actioned.**~~ **Superseded.** Questions 1–6 were all decided
+2026-08-12 (see ROADMAP "Milestone 2"); `assets/` exists, the CLAUDE.md amendment is adopted, Git LFS
+is initialised repo-locally, and the ROADMAP entry is written. The pipeline itself was proven
+end-to-end on 2026-08-13 — see §10.
+
+---
+
+## 10. The verified pipeline (M2 Phase 1, proven 2026-08-13)
+
+Blender was installed 2026-08-13: **Blender 5.2.0 LTS**, build `fbe6228777e7`.
+
+```
+C:\Program Files\Blender Foundation\Blender 5.2\blender.exe
+```
+
+**This path is NOT a build dependency and must never become one.** Nothing in the Godot project,
+the test suite, or an export needs Blender. It is a *content-authoring* tool used to produce `.glb`
+files that are then committed; the game builds from the committed `.glb` alone. Blender is **not on
+PATH** — invoke it by full path.
+
+### Author → export → commit
+
+```powershell
+$BLENDER = "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"
+
+# Export a source .blend to the project spec (settings pinned in the script):
+& $BLENDER -b assets/source/foo.blend -P tools/blender/export_glb.py -- assets/models/foo.glb
+
+# Let Godot generate the plain-text .import sidecar, then commit BOTH:
+& $GODOT --headless --path . --import
+```
+
+`tools/blender/export_glb.py` is the authority on export settings. **GUI equivalents**, if exporting
+by hand via *File > Export > glTF 2.0*: format **glTF Binary (.glb)**, **+Y Up** on, **Apply
+Modifiers** on, **Cameras** off, **Punctual Lights** off, **Draco compression** off. The script also
+hard-fails if the scene's unit scale isn't 1.0 (1 unit = 1 metre).
+
+### Colour: the one genuine trap
+**Godot `albedo_color` is sRGB. Blender Base Color and glTF `baseColorFactor` are linear.** The
+importer converts correctly *in that direction* — a Blender material round-trips to the right
+on-screen colour. The trap is copying the §4 palette numbers into Blender by hand, which does **not**
+round-trip and renders far too bright.
+
+**Use the Blender hex field** in the colour picker with the hex column in §4 — Blender's hex input
+does the sRGB→linear conversion for you. Never type the decimal Godot values into Base Color.
+
+*Measured proof:* a Blender material at linear `0.25` imported as Godot `albedo_color 0.5371`
+(`1.055 × 0.25^(1/2.4) − 0.055 = 0.5372` ✓) — same rendered colour, different number. Hand-authored
+`AnvilMat 0.25` is sRGB, i.e. linear `0.0508`. Roughly a 10× brightness gap.
+
+### What Phase 1 measured (throwaway 1 m cube, `assets/models/smoke_cube.glb`)
+| Check | Result |
+|---|---|
+| Axis | Y-up correct, **node transform fully identity** — no baked ±90° correction |
+| Scale | 1 m cube → AABB size exactly `(1, 1, 1)`. No 0.01/100× error |
+| Pivot | base-pivoted: AABB `(-0.5, 0, -0.5)`, world Y range `0.0 .. 1.0` |
+| Materials | name + colour preserved (modulo the sRGB conversion above) |
+| Cameras/lights | excluded, as intended |
+| `.import` sidecar | plain text, no machine-specific paths, committed |
+| LFS routing | `.glb` + `.blend` → LFS; `.import` stays plain text |
+| `.gdignore` | holds — no `.import` generated for the `.blend` |
+| Suite | 65/65 green, orphans at the documented 24 baseline; clean headless boot |
+
+**Pivot note for Phase 2:** the swap moved the anvil's transform from `y = 0.5` to `y = 0`. Graybox
+`BoxMesh` primitives are **centre-pivoted**; base-pivoted imported assets are not. Expect to drop a
+half-height off Y for every prop swapped this way.
+
+The cube and its sidecar are kept as a **reference example** of a correct import. Delete them once
+Phase 2's first real asset lands and supersedes them.

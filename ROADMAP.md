@@ -96,10 +96,18 @@ No combat, no crafting/economy, no procedural terrain, no streaming, no voice ac
 - [x] `assets/README.md` — spec, rules, and the collision prohibition at point of use
 - [x] ROADMAP entry (this section)
 
-### Phase 1 — Prove the pipeline with ONE throwaway asset ⚠️
-- [ ] Push a trivial object (a Blender cube is fine) through export → `assets/models/` → import → swap **one** graybox mesh (the anvil) → verify scale/axis/pivot → tests → boot
-- [ ] Confirm the `.import` sidecar is plain text and committed, and the `.glb` goes to LFS
+### Phase 1 — Prove the pipeline with ONE throwaway asset ✅ COMPLETE (2026-08-13)
+- [x] Push a trivial object (a Blender cube is fine) through export → `assets/models/` → import → swap **one** graybox mesh (the anvil) → verify scale/axis/pivot → tests → boot — **all clean: identity node transform (no baked axis correction), AABB exactly 1 m, base pivot, 65/65 tests, clean headless boot**
+- [x] Confirm the `.import` sidecar is plain text and committed, and the `.glb` goes to LFS — verified via `git check-attr` / `git lfs ls-files`; sidecar carries no machine-specific paths
 - *Rationale: catches Y-up/Z-up flips, metre-scale errors and wrong pivots on a disposable asset instead of after twenty buildings exist. Do not skip.*
+
+**It paid for itself.** Geometry was clean, but the proof caught a **colour-space error in the docs**: `ART_PIPELINE.md` §4 described the palette as linear when it is **sRGB**. Blender's Base Color is linear, so copying those numbers across would have rendered every M2 asset ~10× too bright — silent, plausible-looking palette drift across the whole village, found only after the art was built. §4 now carries a hex column; §10 has the explanation. **This is the reason the phase existed.**
+
+Also landed: `tools/blender/export_glb.py` (pins export settings; GUI equivalents documented), Blender 5.2.0 LTS recorded in §10 as explicitly **not** a build dependency, and the now-load-bearing `.gdignore` verified.
+
+**Carried into Phase 2:** graybox `BoxMesh` primitives are centre-pivoted, imported assets are base-pivoted — expect to drop half the height off Y on every prop swap (the anvil went `y = 0.5` → `y = 0`).
+
+*The anvil was reverted to graybox; `smoke_cube.glb` + sidecar stay committed as a reference example of a correct import, to be deleted when Phase 2's first real asset supersedes them.*
 
 ### Phase 2 — Environment (user authors, Claude integrates)
 - [ ] One building type first, verified end-to-end, before the rest
