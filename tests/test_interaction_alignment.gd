@@ -17,11 +17,20 @@ extends GutTest
 ## the same "I am standing right there and nothing happens" bug.
 ##
 ## Implementation note — this reads the authored .tscn via SceneState rather than instantiating the
-## zones. Trigger/mesh alignment is a static property of the scene file, so a live tree buys nothing,
-## and instantiating these zones headlessly raises the documented-benign
-## `material_get_instance_shader_parameters` / `Parameter "material" is null` error from the dummy
-## renderer, which GUT counts as a failure. Composing transforms with Transform3D multiplication is
-## also exact, avoiding the basis-convention trap that caused the steed-facing bug.
+## zones (see tests/helpers/scene_geometry.gd for why, and for the shared measurement code).
+##
+## ── HARDENED 2026-08-13, before M2 Phase 2's first art swap ─────────────────────────────────
+## This test used to `continue` past any interactable with no "Mesh" child. That made it capable of
+## disarming ITSELF during the art pass: an imported .glb is an instanced PackedScene, not a
+## MeshInstance3D named "Mesh", so swapping art would have dropped interactables out of the checked
+## set one by one — silently, with the suite still green, since the only count assertion was
+## `checked > 0`. The guard against "I was standing right in front of her and couldn't talk" would
+## have evaporated across the village without a single failing test.
+##
+## Now a trigger-bearing node with no measurable body is a FAILURE unless it is named in
+## BODYLESS_BY_DESIGN below. Skipping is a reviewed decision, not an accident.
+
+const SG := preload("res://tests/helpers/scene_geometry.gd")
 
 const ZONES: Dictionary = {
 	"village": "res://scenes/zones/zone_01_village.tscn",
@@ -29,38 +38,117 @@ const ZONES: Dictionary = {
 	"shore": "res://scenes/zones/zone_02_shore.tscn",
 }
 
+## Interactables with a trigger but no measurable body. Keyed "zone:node_path". Split into two
+## lists because the two reasons are NOT equally healthy, and collapsing them would hide the second.
+##
+## Do NOT add an entry to silence a failure on something that IS supposed to have its own art —
+## that is the wrong fix the ROADMAP warns about, and it re-opens the bug this file prevents.
+
+## (A) Genuinely invisible volumes: you walk into them, there is nothing to look at. Correct as-is.
+const INVISIBLE_BY_DESIGN: Array = [
+	"village:./ExitToShore",     # press-E zone exit at the north gap; no art by design
+	"tower:./ExitToVillage",     # press-E zone exit in the tower doorway; no art by design
+	"shore:./ShoreTrigger",      # cutscene trigger volume, not an Interactable the player examines
+]
+
+## (B) ⚠️ KNOWN COVERAGE GAP, not a clean bill of health. These DO have visible bodies — but the
+## geometry is a SIBLING under Props/Geometry, not a "Mesh" child, so this test cannot associate
+## the two and therefore cannot check alignment. They were silently skipped before 2026-08-13 too;
+## naming them here makes the gap visible instead of invisible.
+##
+## Spot-checked 2026-08-13 and currently fine, e.g. SecretHeart's trigger at (-16.4, 1.5, -8) spans
+## y 0..3 around Props/CarvedHeart centred at y=2. But nothing HOLDS that — and these are exactly
+## the props M2 Phase 2 swaps (banners, the anvil, the carved heart), so the drift this file exists
+## to catch is unguarded precisely where the art pass will move things.
+##
+## Closing it needs an explicit interactable→geometry mapping. Deliberately not built here: it is
+## new scope, not in the M2 Phase 2 list. Flagged for a scope decision.
+const BODY_IS_SIBLING_GEOMETRY: Array = [
+	"village:./Interactables/WeddingSetup",    # banners + flowers under Props
+	"village:./Interactables/StableInteract",  # the steed + stable structure
+	"village:./Interactables/TowerInteract",   # the GuardTower building itself
+	"village:./Interactables/SecretHeart",     # Props/CarvedHeart
+	"tower:./Interactables/WatchmanTally",     # tally marks on the tower wall
+]
+
+## Every node allowed to have no measurable body, for whichever reason.
+static func _bodyless_allowlist() -> Array:
+	return INVISIBLE_BY_DESIGN + BODY_IS_SIBLING_GEOMETRY
+
 func test_every_interactable_body_sits_inside_its_own_trigger() -> void:
 	var checked: int = 0
 
 	for zone_name: String in ZONES:
-		var nodes: Dictionary = _read_scene(ZONES[zone_name])
+		var nodes: Dictionary = SG.read_scene(ZONES[zone_name])
 		for path: String in nodes:
-			var trigger_box: AABB = _trigger_box(nodes, path)
-			if trigger_box.size == Vector3.ZERO:
-				continue
-			if not nodes.has(path + "/Mesh"):
+			var trigger: AABB = SG.trigger_box(nodes, path)
+			if trigger.size == Vector3.ZERO:
 				continue
 
-			var body: Vector3 = _global_of(nodes, path + "/Mesh").origin
-			assert_true(trigger_box.has_point(body),
-				"%s/%s: visible body at %s is outside its own trigger %s — the player cannot interact while standing at it" \
-					% [zone_name, path, body, trigger_box])
+			var key: String = "%s:%s" % [zone_name, path]
+			var body: AABB = SG.body_box(nodes, path)
+
+			if body.size == Vector3.ZERO:
+				assert_true(_bodyless_allowlist().has(key),
+					("%s has a detection trigger but NO measurable visible body.\n" \
+					+ "  If it is genuinely invisible (a walk-in exit volume), add it to " \
+					+ "INVISIBLE_BY_DESIGN with a reason.\n" \
+					+ "  If its art is a sibling node rather than a Mesh child, add it to " \
+					+ "BODY_IS_SIBLING_GEOMETRY — and read that constant's warning first.\n" \
+					+ "  If it is supposed to have its OWN art, an art swap has renamed or " \
+					+ "replaced its Mesh child and this guard is no longer watching it — fix the " \
+					+ "scene, not this test.") % key)
+				continue
+
+			# Centre of the visible geometry, not the node origin: imported assets are
+			# base-pivoted (origin at the feet), so the origin alone is a poor stand-in for
+			# "where the player sees this thing".
+			var body_point: Vector3 = body.get_center()
+			assert_true(trigger.has_point(body_point),
+				"%s: visible body centred at %s is outside its own trigger %s — the player cannot interact while standing at it" \
+					% [key, body_point, trigger])
 			checked += 1
 
-	assert_gt(checked, 0, "should have found interactables with both a Mesh and a Trigger")
+	assert_gt(checked, 0, "should have found interactables with both a body and a Trigger")
+
+func test_bodyless_allowlist_has_not_gone_stale() -> void:
+	# An allowlist entry for a node that no longer exists is dead weight that would silently cover
+	# for a future node of the same name. Every entry must still name a real trigger-bearing node.
+	for key: String in _bodyless_allowlist():
+		var parts: PackedStringArray = key.split(":")
+		assert_eq(parts.size(), 2, "malformed allowlist entry %s — expected 'zone:path'" % key)
+		if parts.size() != 2:
+			continue
+
+		var zone_name: String = parts[0]
+		var path: String = parts[1]
+		assert_true(ZONES.has(zone_name), "allowlist names unknown zone %s" % zone_name)
+		if not ZONES.has(zone_name):
+			continue
+
+		var nodes: Dictionary = SG.read_scene(ZONES[zone_name])
+		assert_true(nodes.has(path), "allowlist entry %s no longer exists — remove it" % key)
+		if not nodes.has(path):
+			continue
+
+		assert_ne(SG.trigger_box(nodes, path).size, Vector3.ZERO,
+			"allowlist entry %s no longer has a box trigger — remove it" % key)
+		assert_eq(SG.body_box(nodes, path).size, Vector3.ZERO,
+			("%s now HAS its own measurable body, so it is no longer bodyless — remove it from " \
+			+ "the allowlist so it gets alignment-checked like everything else.") % key)
 
 func test_no_two_triggers_overlap_in_any_zone() -> void:
 	# player.gd:_on_interaction_available is LAST-ENTERED-WINS, not nearest-wins, so two overlapping
 	# triggers let the player stand at one interactable while the other's prompt shows.
 	for zone_name: String in ZONES:
-		var nodes: Dictionary = _read_scene(ZONES[zone_name])
+		var nodes: Dictionary = SG.read_scene(ZONES[zone_name])
 		var boxes: Array = []
 		for path: String in nodes:
 			# A script filters out scriptless Area3Ds like the shore's cutscene ShoreTrigger, which
 			# is not an Interactable and legitimately overlaps nothing.
 			if not (nodes[path] as Dictionary)["has_script"]:
 				continue
-			var box: AABB = _trigger_box(nodes, path)
+			var box: AABB = SG.trigger_box(nodes, path)
 			if box.size == Vector3.ZERO:
 				continue
 			boxes.append({"name": path, "aabb": box})
@@ -72,53 +160,3 @@ func test_no_two_triggers_overlap_in_any_zone() -> void:
 				assert_false((a["aabb"] as AABB).intersects(b["aabb"] as AABB),
 					"%s: %s and %s triggers overlap; last-entered-wins would show the wrong prompt" \
 						% [zone_name, a["name"], b["name"]])
-
-## Reads a .tscn into {node_path: {transform, has_script, shape}} without instantiating it.
-func _read_scene(path: String) -> Dictionary:
-	var state: SceneState = (load(path) as PackedScene).get_state()
-	var nodes: Dictionary = {}
-	for i in range(state.get_node_count()):
-		var node_path: String = String(state.get_node_path(i))
-		var entry: Dictionary = {
-			"transform": Transform3D.IDENTITY,
-			"has_script": false,
-			"shape": null,
-		}
-		for j in range(state.get_node_property_count(i)):
-			var prop: String = state.get_node_property_name(i, j)
-			var value: Variant = state.get_node_property_value(i, j)
-			match prop:
-				"transform":
-					entry["transform"] = value
-				"script":
-					entry["has_script"] = value != null
-				"shape":
-					entry["shape"] = value
-		nodes[node_path] = entry
-	return nodes
-
-## Composes a node's transform down from the scene root by multiplication.
-func _global_of(nodes: Dictionary, path: String) -> Transform3D:
-	var acc: Transform3D = Transform3D.IDENTITY
-	if nodes.has("."):
-		acc = (nodes["."] as Dictionary)["transform"]
-	if path == ".":
-		return acc
-	var walked: String = ""
-	for part: String in path.split("/"):
-		walked = part if walked == "" else walked + "/" + part
-		if nodes.has(walked):
-			acc = acc * ((nodes[walked] as Dictionary)["transform"] as Transform3D)
-	return acc
-
-## World-space AABB of a node's "Trigger" child, or a zero-size AABB if it has no box trigger.
-func _trigger_box(nodes: Dictionary, path: String) -> AABB:
-	var trigger_path: String = path + "/Trigger"
-	if not nodes.has(trigger_path):
-		return AABB()
-	var shape: Variant = (nodes[trigger_path] as Dictionary)["shape"]
-	if not shape is BoxShape3D:
-		return AABB()
-	var extents: Vector3 = (shape as BoxShape3D).size * 0.5
-	var centre: Vector3 = _global_of(nodes, trigger_path).origin
-	return AABB(centre - extents, extents * 2.0)

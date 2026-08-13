@@ -320,5 +320,8 @@ does the sRGB→linear conversion for you. Never type the decimal Godot values i
 `BoxMesh` primitives are **centre-pivoted**; base-pivoted imported assets are not. Expect to drop a
 half-height off Y for every prop swapped this way.
 
-The cube and its sidecar are kept as a **reference example** of a correct import. Delete them once
-Phase 2's first real asset lands and supersedes them.
+The cube and its sidecar are kept as a **reference example** of a correct import.
+
+**Updated 2026-08-13 — do NOT delete it.** `tests/test_scene_geometry.gd` now uses the cube as a
+known-exact instrument (1 m, base-pivoted, no baked rotation) to prove the AABB guards can measure
+imported art at all. It has a permanent job; removing it blinds those tests.

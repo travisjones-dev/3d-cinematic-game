@@ -16,10 +16,20 @@ extends GutTest
 ## taken from the wrong spot: a ceiling that clears the centre of the room but not its edges, and a
 ## wall extension that leaves a hairline clerestory band of sky at the old wall top.
 ##
-## Implementation note — reads the authored .tscn via SceneState rather than instantiating the zone,
-## per tests/test_interaction_alignment.gd: enclosure is a static property of the scene file, and
-## instantiating these zones headlessly raises the documented-benign dummy-renderer
-## `Parameter "material" is null` error, which GUT counts as a failure.
+## Implementation note — reads the authored .tscn via SceneState rather than instantiating the zone:
+## enclosure is a static property of the scene file, and instantiating these zones headlessly raises
+## the documented-benign dummy-renderer `Parameter "material" is null` error, which GUT counts as a
+## failure. The measurement code lives in tests/helpers/scene_geometry.gd, shared with
+## test_interaction_alignment.gd.
+##
+## ── M2 art-pass note (2026-08-13) ───────────────────────────────────────────────────────────
+## These assertions are the guard against "the top of the tower is open to the void", and they will
+## come under real pressure when the tower interior gets its art pass — the ceiling and upper walls
+## are on the swap list. `SG.body_box()` measures imported .glb assets as well as graybox primitives,
+## so a swap should keep these tests meaningful rather than breaking them. If one DOES break, the
+## fix is to re-check the geometry against the numbers below, NOT to relax the constant.
+
+const SG := preload("res://tests/helpers/scene_geometry.gd")
 
 const TOWER: String = "res://scenes/zones/zone_01_tower_interior.tscn"
 const VILLAGE: String = "res://scenes/zones/zone_01_village.tscn"
@@ -96,45 +106,19 @@ func test_village_guard_tower_has_a_matching_roof() -> void:
 	assert_gt(absf(lean.get_euler().z), 0.05,
 		"the village tower roof is upright but the cracked crown leans — it should inherit the lean")
 
-## Reads a .tscn into {node_path: {transform, mesh}} without instantiating it.
+## Reads a .tscn without instantiating it. See tests/helpers/scene_geometry.gd.
 func _read_scene(path: String) -> Dictionary:
-	var state: SceneState = (load(path) as PackedScene).get_state()
-	var nodes: Dictionary = {}
-	for i in range(state.get_node_count()):
-		var node_path: String = String(state.get_node_path(i))
-		var entry: Dictionary = {"transform": Transform3D.IDENTITY, "mesh": null}
-		for j in range(state.get_node_property_count(i)):
-			match state.get_node_property_name(i, j):
-				"transform":
-					entry["transform"] = state.get_node_property_value(i, j)
-				"mesh":
-					entry["mesh"] = state.get_node_property_value(i, j)
-		nodes[node_path] = entry
-	return nodes
+	return SG.read_scene(path)
 
 ## Composes a node's transform down from the scene root by multiplication.
 func _global_of(nodes: Dictionary, path: String) -> Transform3D:
-	var acc: Transform3D = Transform3D.IDENTITY
-	if nodes.has("."):
-		acc = (nodes["."] as Dictionary)["transform"]
-	if path == ".":
-		return acc
-	var walked: String = ""
-	for part: String in path.split("/"):
-		walked = part if walked == "" else walked + "/" + part
-		if nodes.has(walked):
-			acc = acc * ((nodes[walked] as Dictionary)["transform"] as Transform3D)
-	return acc
+	return SG.global_of(nodes, path)
 
-## World-space AABB of a node's own mesh, or of its "Mesh" child for StaticBody3D pieces.
+## World-space AABB of a node's visible geometry — its own mesh, its "Mesh" child, or an imported
+## .glb instanced under it. Fails loudly rather than returning a silently-empty box, because every
+## caller here compares heights: a zero AABB reads as "y=0", which would make an open roof look
+## enclosed and pass this test for the worst possible reason.
 func _mesh_box(nodes: Dictionary, path: String) -> AABB:
-	var mesh_path: String = path
-	if (nodes[path] as Dictionary)["mesh"] == null and nodes.has(path + "/Mesh"):
-		mesh_path = path + "/Mesh"
-	var mesh: Variant = (nodes[mesh_path] as Dictionary)["mesh"]
-	assert_not_null(mesh, "%s has no mesh to measure" % path)
-	if mesh == null:
-		return AABB()
-	var extents: Vector3 = (mesh as Mesh).get_aabb().size * 0.5
-	var centre: Vector3 = _global_of(nodes, mesh_path).origin
-	return AABB(centre - extents, extents * 2.0)
+	var box: AABB = SG.body_box(nodes, path)
+	assert_ne(box.size, Vector3.ZERO, "%s has no measurable mesh — cannot verify enclosure" % path)
+	return box

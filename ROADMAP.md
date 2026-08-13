@@ -109,10 +109,12 @@ Also landed: `tools/blender/export_glb.py` (pins export settings; GUI equivalent
 
 *The anvil was reverted to graybox; `smoke_cube.glb` + sidecar stay committed as a reference example of a correct import, to be deleted when Phase 2's first real asset supersedes them.*
 
-### Phase 2 — Environment (user authors, Claude integrates)
-- [ ] One building type first, verified end-to-end, before the rest
+### Phase 2 — Environment (user authors, Claude integrates)  ⟵ IN PROGRESS
+- [x] **Harness hardened first** (2026-08-13) — the AABB guards can now measure imported `.glb` art and can no longer silently skip. See the re-assessed risk below; this replaces "update the tests per asset"
+- [x] **Authoring brief for the first building type** — `docs/art_briefs/home.md`: exact envelope (6 × 6 × 5.2 m), base pivot, 4 named material slots with **hex** palette values, door-faces−Y-in-Blender, no collision
+- [ ] **⏳ BLOCKED ON USER: author `assets/source/home.blend`** → export `home.glb`. Environment art is user-authored per the M2 decision; Claude cannot make this
+- [ ] Integrate + verify the home (pivot, envelope, door facing, 4 surfaces, palette), swap `Geometry/Home1` + `Home2`, tests + boot, human visual check
 - [ ] Homes → mill/stables → guard tower → trees → props (banners, anvil, carved heart)
-- [ ] Update the AABB-based tests per asset (see risk below)
 
 ### Phase 3 — Characters + animation engineering
 - [ ] Retarget one Mixamo source to the 2.0 m / feet-pivot spec; mount under the existing `Model` node
@@ -123,8 +125,23 @@ Also landed: `tools/blender/export_glb.py` (pins export settings; GUI equivalent
 - Character art mounts under the player's existing `Model` pivot so `godot-thirdperson-controller` keeps working untouched.
 - Visual results are **human-verified**; Claude cannot judge them.
 
-### Known risk, accepted going in
-`test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** — they are the guard against the "visible but unusable" bug class. Swapping box meshes for imported geometry changes those AABBs and will break them. **The wrong fix is loosening assertions until they pass**; update them deliberately, per asset, keeping the guarantee intact.
+### Known risk — RE-ASSESSED AND LARGELY DEFUSED 2026-08-13 (human-approved in session)
+The original entry read: *"`test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on mesh AABBs … swapping meshes will break them. The wrong fix is loosening assertions until they pass."* The instinct was right; two of the three specifics were wrong, and the real danger was worse than described.
+
+**What the tests actually do:**
+- `test_village_boundaries` — **not an AABB test at all.** It drives the player with physics against *collision*, which art swaps never touch. Unaffected.
+- `test_tower_roof` — genuinely AABB-based. Would have **failed loudly** on a swap (an instanced `.glb` has no `mesh` property). Loud failure is the safe kind.
+- `test_interaction_alignment` — the dangerous one. It read the transform of a child named `Mesh` and **silently `continue`d** past anything without one. An imported `.glb` is an instanced PackedScene, not a `MeshInstance3D` named `Mesh`, so the art pass would have dropped interactables out of the checked set one at a time, **suite still green**, until the guard against *"I was standing right in front of her and couldn't talk"* covered nothing. It needed no wrong fix to break — it would have disarmed itself.
+
+**Done instead of per-asset patching** (front-loaded so the first swap is guarded by a harness that works, rather than one verified afterwards):
+- `tests/helpers/scene_geometry.gd` — shared static reader; `body_box()` resolves an inline mesh, an **instanced `.glb`**, or a `Mesh` child, and honours the mesh's own AABB position instead of assuming it is centred on its node (true for primitives, wrong by half the height for base-pivoted art).
+- `test_interaction_alignment` — a trigger with no measurable body is now a **failure** unless allowlisted. Two allowlists, kept separate on purpose: `INVISIBLE_BY_DESIGN` (correct) and `BODY_IS_SIBLING_GEOMETRY` (a coverage gap, named rather than hidden — see below). A staleness test stops either list rotting.
+- `tests/test_scene_geometry.gd` + `tests/fixtures/imported_asset_probe.tscn` — proves the harness measures imported art, using the Phase 1 cube as a known-exact instrument. **This is what earns `smoke_cube.glb` a permanent place in the repo** (it is no longer "delete when superseded").
+
+**70 tests / 274 asserts green**, up from 65 / 214 — coverage went up, which is the check that no assertion was quietly loosened.
+
+### ⚠️ Open coverage gap surfaced by the above — needs a scope decision
+Five interactables (`WeddingSetup`, `StableInteract`, `TowerInteract`, `SecretHeart`, `WatchmanTally`) have visible bodies that are **sibling nodes under `Props`/`Geometry`, not `Mesh` children**, so the alignment test cannot associate trigger with art and never has. Spot-checked 2026-08-13 and currently correct (e.g. `SecretHeart`'s trigger spans y 0..3 around `CarvedHeart` at y=2) — but nothing holds it, and **these are exactly the props Phase 2 swaps** (banners, anvil, carved heart). Closing it needs an explicit interactable→geometry mapping. **Not built: new scope, not on the Phase 2 list.**
 
 ### Explicit non-goals for M2
 Not a second zone. Not the quest journal UI. Not the audio pass. Those return to the parking lot below until Zone 1 reads as finished.

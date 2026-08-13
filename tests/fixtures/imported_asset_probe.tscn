@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+; Fixture for test_scene_geometry.gd — the ONLY place an imported .glb is instanced in a scene
+; until M2 Phase 2's first real asset lands. It exists so the measurement harness that guards the
+; "visible but unusable" bug class is itself proven against imported art, rather than being trusted
+; and found wanting at the moment the first building arrives.
+;
+; The offset transform is deliberate: it proves body_box() composes the instance's own geometry
+; with the placing node's transform, which is exactly what a real art swap depends on.
+
+[ext_resource type="PackedScene" path="res://assets/models/smoke_cube.glb" id="1_cube"]
+
+[node name="Probe" type="Node3D"]
+
+[node name="Prop" parent="." instance=ExtResource("1_cube")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -3)

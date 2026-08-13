@@ -35,8 +35,25 @@ and it resolves. In the editor, this happens automatically on open.
 - `test_game_state.gd` — flag set/get, defaults, clearing, namespacing, quest-stage default, `flag_changed` signal
 - `test_save_manager.gd` — GameState save/load round-trip, player-transform round-trip, empty-slot handling
 - `test_scene_director.gd` — loads `main.tscn`, verifies zone swap, spawn-point placement, fade clearing, `zone_entered` signal
+- `test_scene_geometry.gd` — proves the AABB harness can measure **imported `.glb` art**, not just
+  graybox primitives: size, base pivot, transform composition, and that missing geometry reports as
+  zero rather than a plausible-looking guess
 
-Current: **65 tests, all passing** (re-verified 2026-08-12).
+Current: **70 tests, 274 asserts, all passing** (re-verified 2026-08-13).
+
+## Shared helpers and fixtures (added 2026-08-13, M2 art pass)
+- `tests/helpers/scene_geometry.gd` — static geometry reader for authored `.tscn` files. Measures
+  scenes **without instantiating them**, and resolves an inline mesh, an **instanced `.glb`**, or a
+  `Mesh` child. Shared by `test_interaction_alignment.gd` and `test_tower_roof.gd`, which each used
+  to carry their own copy.
+  - **No `class_name` on purpose** — see the gotcha above; a new `class_name` forces an extra
+    `--import` pass before GUT will run. Callers `preload()` it instead.
+  - Contract: "nothing measurable" is a **zero-size AABB**, and callers must treat that as a
+    failure. Skipping is indistinguishable from passing, which is how an art swap could quietly
+    disarm the guards.
+- `tests/fixtures/imported_asset_probe.tscn` — instances the Phase 1 reference `.glb` at an offset,
+  so `test_scene_geometry.gd` can prove the harness measures imported art and composes placement
+  correctly. Neither directory is collected by GUT: it only picks up `test_`-prefixed scripts.
 
 Required coverage per CLAUDE.md (save/load round-trip, quest stage transitions, flag-condition
 evaluation) grows here as those systems land. Rendering, feel, and cinematics are human-tested.
