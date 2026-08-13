@@ -2,6 +2,23 @@
 
 Carry this into the next session. Kept current so a fresh session can resume without re-deriving state.
 
+## Dev tooling — pushing this repo needs the RIGHT GitHub account (2026-08-12)
+**Symptom:** `git push` fails with `remote: Repository not found.` The repo is fine — this is an *identity* problem wearing a *missing repo* costume.
+
+**Cause:** two accounts are logged into `gh` on this machine — **`travisjonesphoenix`** (work, matches the phoenixoutcomes email, and is usually the *active* one) and **`travisjones-dev`**, which actually owns `3d-cinematic-game` (private). `gh`'s git credential helper always hands git the **active** account's token. GitHub returns **404, not 403**, for a private repo you can't authenticate to — so the wrong identity looks exactly like a deleted repo.
+
+**Use this to push:**
+```
+git pushdev              # switches to travisjones-dev, pushes, restores the previous account
+```
+A repo-local alias (`alias.pushdev` → `.git/push-as-dev.sh`). Restores the prior account even if the push fails, so the work account is never left swapped. `.git/` isn't committed — **if the alias vanishes, recreate it from this entry.** Plain `git push` still works whenever `travisjones-dev` happens to be active.
+
+**Two things that DON'T work — don't burn time re-trying them:**
+- ❌ **`git config --local credential.https://github.com.username travisjones-dev`.** `gh`'s helper ignores the username hint and returns the active account's token regardless. Worse, it doesn't fail — git falls back to an interactive password prompt and **hangs indefinitely**. (Always set `GIT_TERMINAL_PROMPT=0` when testing credentials non-interactively, or a wrong guess costs you a full timeout instead of an error.)
+- ❌ **A `pre-push` hook that checks the active account.** Verified dead: git **authenticates with the remote before running `pre-push`** (the hook needs the remote's ref state on stdin), so on the failure path the hook never runs at all. It only ever fires when auth already succeeded.
+
+**The only true fix** (plain `git push` works regardless of active account) is an **SSH remote** — `gh` account state stops mattering entirely. Needs a keypair generated and added to the `travisjones-dev` GitHub account; **no SSH keys exist on this machine yet** (`~/.ssh` has none), so it's a deliberate setup step, not a quick config tweak.
+
 ## Documented noise — every shutdown message attributed (2026-08-12)
 Ground-truth checks re-run 2026-08-12: `--import` exit 0, **65/65** GUT (17 scripts, 214 asserts, 50.2s), `main.tscn` headless boot exit 0 and **completely silent** — confirming the roof + fog-removal work left no runtime errors on the real load path. Working tree clean, no code changed.
 
