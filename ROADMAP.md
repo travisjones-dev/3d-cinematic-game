@@ -78,8 +78,53 @@ No combat, no crafting/economy, no procedural terrain, no streaming, no voice ac
 
 ---
 
+## Milestone 2 — Zone 1 Art Pass  ⟵ CURRENT
+**Scoped and approved 2026-08-12.** Goal, in the user's words: make the *first zone actually feel done* rather than accumulating more graybox zones. Aligns with the Zone Design Law (density over size) and pillar #2 (mood over fidelity).
+
+**Decisions taken 2026-08-12 (were ART_PIPELINE.md's open questions 1–6):**
+- **Style: low-poly flat-shaded.** Chosen because it *removes* the hardest beginner skills — no UV unwrapping, no PBR texture painting, no Substance — and because the existing 12-material palette transfers unchanged.
+- **Environment: user-authored in Blender.** Buildings, trees, props.
+- **Characters: Mixamo / one character pack.** Rigging + skinning + animating 5 humans and a quadruped as a beginner is months; this is the schedule risk that would strand the village in graybox. **One source only** — mixed sources are what make a game read as an asset flip.
+- **Git LFS: yes, before the first binary.** Done in Phase 0.
+- **CLAUDE.md plain-text rule: amended, scoped** to `assets/` (done in Phase 0).
+- Pipeline: author `.blend` → export **`.glb`** → commit. Not direct `.blend` import (machine-specific editor setting, breaks headless).
+
+### Phase 0 — Groundwork (plain text, no art required)
+- [x] Git LFS initialised **repo-locally** (`--local`, global config untouched — this is a work laptop) + `.gitattributes` scoped to `assets/` so addon PNGs are left alone
+- [x] `assets/models/` + `assets/source/` created, with `.gdignore` in `source/` so Godot never attempts a Blender conversion
+- [x] CLAUDE.md hard-rule amendment + project-structure block updated
+- [x] `assets/README.md` — spec, rules, and the collision prohibition at point of use
+- [x] ROADMAP entry (this section)
+
+### Phase 1 — Prove the pipeline with ONE throwaway asset ⚠️
+- [ ] Push a trivial object (a Blender cube is fine) through export → `assets/models/` → import → swap **one** graybox mesh (the anvil) → verify scale/axis/pivot → tests → boot
+- [ ] Confirm the `.import` sidecar is plain text and committed, and the `.glb` goes to LFS
+- *Rationale: catches Y-up/Z-up flips, metre-scale errors and wrong pivots on a disposable asset instead of after twenty buildings exist. Do not skip.*
+
+### Phase 2 — Environment (user authors, Claude integrates)
+- [ ] One building type first, verified end-to-end, before the rest
+- [ ] Homes → mill/stables → guard tower → trees → props (banners, anvil, carved heart)
+- [ ] Update the AABB-based tests per asset (see risk below)
+
+### Phase 3 — Characters + animation engineering
+- [ ] Retarget one Mixamo source to the 2.0 m / feet-pivot spec; mount under the existing `Model` node
+- [ ] **`AnimationPlayer`/`AnimationTree` driven by velocity (idle/walk/run), blend-tuned against foot-slide** — `player.tscn` has none today. This is engineering, not art, and does not arrive with the model.
+
+### Hard rules for this milestone
+- **Art swaps touch `MeshInstance3D` ONLY — never `CollisionShape3D`.** Collision stays hand-authored primitives. Deriving it from art meshes is how the capsule seam-freeze class returns (`godot-multisegment-terrain`).
+- Character art mounts under the player's existing `Model` pivot so `godot-thirdperson-controller` keeps working untouched.
+- Visual results are **human-verified**; Claude cannot judge them.
+
+### Known risk, accepted going in
+`test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** — they are the guard against the "visible but unusable" bug class. Swapping box meshes for imported geometry changes those AABBs and will break them. **The wrong fix is loosening assertions until they pass**; update them deliberately, per asset, keeping the guarantee intact.
+
+### Explicit non-goals for M2
+Not a second zone. Not the quest journal UI. Not the audio pass. Those return to the parking lot below until Zone 1 reads as finished.
+
+---
+
 ## Beyond the slice — sketch only, DO NOT BUILD
 Listed only so ideas have a parking spot. Nothing here is scoped or approved.
-- **M2:** second zone + interconnection, quest journal UI, ambient audio pass
+- **M2 leftovers (deferred until Zone 1 art lands):** second zone + interconnection, quest journal UI, ambient audio pass
 - **M3:** third zone, faction/relationship flags, combat *only if the story demands it*
 - **M4:** content complete for Act 1, options menu, accessibility pass

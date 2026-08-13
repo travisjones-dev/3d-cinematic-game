@@ -12,7 +12,9 @@ Story-rich, cinematic medieval fantasy RPG. Godot 4.x, GDScript. Handcrafted int
 - **Milestone discipline:** do not build any feature not listed in the current milestone (see ROADMAP.md). If a task seems to require an unplanned feature, stop and flag it instead of building it.
 - **Narrative is data, not code.** All dialogue, quest definitions, and story flags live in data files (Dialogic timelines / custom Resources), never hardcoded in scripts. Claude may draft and edit narrative data files, but flag all story-content changes clearly in the summary so they get a human writing pass.
 - **Two-phase workflow for anything structural:** propose a plan first (files to touch, scene changes, risks), wait for approval, then implement. Small bug fixes are exempt.
-- **Plain text everything:** prefer .tscn/.tres/.gd. No solutions that require binary assets or editor-only GUI steps Claude can't reproduce or verify.
+- **Plain text everything, with one scoped exception:** prefer .tscn/.tres/.gd. No solutions that require editor-only GUI steps Claude can't reproduce or verify.
+  - **AMENDED 2026-08-12 (Milestone 2 art pass):** **binary art assets are permitted under `assets/`**, with their plain-text `.import` sidecars committed and the binaries tracked in Git LFS. Everything else stays plain-text and Claude-verifiable: scenes, import settings, material overrides, shaders, animation state machines. **The visual result of a binary asset is human-verified** — consistent with the existing rule that rendering, feel and cinematics are human-tested. Claude must not be asked to author or judge model/texture content it cannot inspect.
+  - Still forbidden: machine-specific editor settings as a dependency. Author `.glb` from Blender and commit that; do **not** rely on Godot's direct `.blend` import, which needs an editor-only `blender_path` and breaks headless runs.
 
 ## Stack & Conventions
 - Godot 4.6.3-stable (verified installed 2026-07-14, build `4.6.3.stable.official`; chosen over 4.7 because Dialogic 2's latest release maxes at 4.6.x — see ROADMAP pinned decisions), GDScript with static typing (`var health: int = 10`), tabs per Godot style guide.
@@ -35,6 +37,9 @@ project/
   data/
     quests/         # QuestResource .tres files
     items/
+  assets/           # binary art (Git LFS) — added 2026-08-12, see assets/README.md
+    models/         # .glb imported by Godot; .import sidecars are plain text + committed
+    source/         # .blend working files; carries .gdignore so Godot skips it
   tests/            # GUT tests
 ```
 

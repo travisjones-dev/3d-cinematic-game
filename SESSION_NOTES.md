@@ -7,7 +7,20 @@ The friend playtest (ROADMAP Phase E) was **closed on user instruction**, and wi
 
 **Recorded honestly so nobody hunts for missing artifacts:** no unprompted-world-question log was captured into the repo. If notes were taken they live outside it. The remaining Phase E box (bug fixes as found) was closed with the milestone — nothing outstanding was reported.
 
-**Next session does NOT start with code.** Milestone 2 is explicitly *sketch only, DO NOT BUILD* in ROADMAP ("second zone + interconnection, quest journal UI, ambient audio pass"). Per CLAUDE.md's milestone-discipline and two-phase rules, the next step is **scoping M2 and getting the plan approved** before anything is built. Also still unresolved and worth folding into that decision: the **art/asset pipeline** (`docs/ART_PIPELINE.md`) — graybox was a deliberate slice-only choice, and Claude cannot author binary art assets under the current rules.
+## ▶ MILESTONE 2 — Zone 1 Art Pass: SCOPED, Phase 0 DONE (2026-08-12)
+**The graybox era is over by decision.** Goal in the user's words: make the *first zone actually feel done* instead of accumulating more graybox zones. ROADMAP "Milestone 2" is the authoritative scope; `docs/ART_PIPELINE.md` is the technical reference and is now marked APPROVED (its own "wait until the playtest closes" gate was satisfied the same day).
+
+**Decisions taken — these were ART_PIPELINE §9's six open questions:**
+- **Style: low-poly flat-shaded.** Picked because it *deletes* the hardest beginner skills (no UV unwrap, no PBR texturing, no Substance) and the existing 12-material palette carries over unchanged.
+- **Environment: user authors in Blender. Characters: Mixamo / ONE pack** — rigging+skinning+animating 5 humans and a quadruped as a beginner is months, and that's the risk that would leave the village graybox indefinitely.
+- **Git LFS: yes**, before any binary. **CLAUDE.md plain-text rule: amended, scoped to `assets/`.**
+- **Pipeline: author `.blend` → export `.glb` → commit the `.glb`.** NOT Godot's direct `.blend` import, which depends on a machine-specific editor setting (`blender_path`) and breaks headless/CI.
+
+**Phase 0 complete and verified** (`--import` exit 0, **65/65** tests, orphans exactly 24): LFS initialised **`--local`** so the work laptop's global git config stays clean; `.gitattributes` scoped to `assets/` so the addon PNGs already in history are left alone; `assets/models/` + `assets/source/`; **`.gdignore` in `source/`** so Godot never attempts a Blender conversion of `.blend` files; CLAUDE.md amended; `assets/README.md` written.
+
+**Next: Phase 1 — prove the pipeline with ONE throwaway asset** (a Blender cube through export → import → swap the anvil → verify scale/axis/pivot). Deliberately before any real modeling, to catch Y-up/Z-up flips and metre-scale errors on something disposable. **User action required first: install Blender.**
+
+⚠️ **Accepted risk, written down before it bites:** `test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** and *will* break as meshes are swapped. They are the guard against the "visible but unusable" bug class — **the wrong fix is loosening assertions until they pass.** Update them deliberately, per asset.
 
 ## Dev tooling — git push identity: SOLVED via SSH (2026-08-12)
 **Just use `git push`.** The remote is SSH and this repo is pinned to its own key, so whichever GitHub account `gh` has active no longer matters. Verified end-to-end with the *wrong* (work) account active.

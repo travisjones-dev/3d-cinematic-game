@@ -1,0 +1,4 @@
+# Godot ignores any directory containing this file.
+# Keeps .blend working files out of the import pipeline -- Godot would otherwise
+# try to convert them via Blender, which needs a machine-specific editor setting
+# and fails in headless/CI runs. See assets/README.md.

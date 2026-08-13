@@ -1,0 +1,37 @@
+# Git LFS — binary art assets (added 2026-08-12, Milestone 2 Phase 0)
+#
+# Set up BEFORE the first binary asset landed, deliberately: retrofitting LFS
+# means rewriting history, force-pushing, and breaking every existing clone.
+#
+# Patterns are scoped to assets/ ON PURPOSE. A blanket "*.png" would also
+# capture the icons already committed under addons/ (Dialogic, Phantom Camera,
+# GUT), which are small, already in history, and none of our business. Scoping
+# keeps LFS to art we author or import.
+#
+# Not covered here, by design: .tscn, .tres, .gd, .import sidecars, .gdshader.
+# Those are plain text, stay diffable, and are the reproducible half of the
+# project per CLAUDE.md.
+
+# 3D models — glTF is the project's interchange format (see docs/ART_PIPELINE.md)
+assets/**/*.glb   filter=lfs diff=lfs merge=lfs -text
+assets/**/*.gltf  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.bin   filter=lfs diff=lfs merge=lfs -text
+assets/**/*.fbx   filter=lfs diff=lfs merge=lfs -text
+
+# Blender sources (assets/source/, which Godot is told to ignore via .gdignore)
+assets/**/*.blend  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.blend1 filter=lfs diff=lfs merge=lfs -text
+
+# Textures — flat-shaded low-poly needs few of these, but the style could grow
+assets/**/*.png  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.jpg  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+assets/**/*.tga  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.exr  filter=lfs diff=lfs merge=lfs -text
+assets/**/*.hdr  filter=lfs diff=lfs merge=lfs -text
+
+# Audio — included now though M2's audio pass isn't scoped yet. Costs nothing
+# today and avoids a second "should have done LFS first" moment later.
+assets/**/*.wav filter=lfs diff=lfs merge=lfs -text
+assets/**/*.ogg filter=lfs diff=lfs merge=lfs -text
+assets/**/*.mp3 filter=lfs diff=lfs merge=lfs -text

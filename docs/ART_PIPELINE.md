@@ -1,10 +1,17 @@
 # Art pipeline — how real art would get into this game
 
-**Status: RESEARCH / NOT APPROVED. Nothing here is scoped or scheduled.**
-Written 2026-07-28 from a discussion about how game art works, because it is an area with no prior
-experience on this project. Parked deliberately so it can be re-reviewed when the time comes.
+**Status: ✅ APPROVED AND IN PROGRESS — Milestone 2, scoped 2026-08-12.**
+Written 2026-07-28 as research and parked. Its own timing gate ("close the friend playtest, then make
+art an explicit M2 decision") was satisfied 2026-08-12, and the decisions were taken the same day.
 
-**Read the timing section first.** The recommendation is *not* to start this yet.
+**§9's six open questions are all answered now** — see ROADMAP.md "Milestone 2 — Zone 1 Art Pass" for
+the authoritative record. In short: **low-poly flat-shaded**, environment authored by the user in
+Blender, **characters from Mixamo/one pack**, Git LFS **yes** (done), CLAUDE.md amendment **adopted as
+written in §7**, scope is **Zone 1 only**.
+
+Everything below remains accurate as the technical reference — the spec sheet (§4), the palette, the
+asset list, and the two "not free" items (§7) especially. §8's *wait* recommendation is now historical;
+it has been acted on.
 
 ---
 
