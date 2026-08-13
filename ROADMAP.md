@@ -12,7 +12,8 @@
 
 ---
 
-## Milestone 1 — Vertical Slice  ⟵ CURRENT
+## Milestone 1 — Vertical Slice  ✅ COMPLETE (closed 2026-08-12)
+*All phases A–E done. Slice is playable end to end: village → tower → shore, with dialogue, a branching choice, a quest chain, the One Cinematic Moment, and save/load — 65/65 tests green. **Milestone 2 is not scoped yet** (see "Beyond the slice" — sketch only, DO NOT BUILD). Next session starts with a scoping decision, not code.*
 
 **Goal:** the smallest playable thing that proves the story pillar (see GAME_PITCH.md, "Vertical Slice Definition").
 **Done when:** a friend plays 10 minutes, unprompted asks a question about the world, and wants to know what happens next.
@@ -68,8 +69,8 @@
 ### Phase E — Slice closeout
 - [x] Save / quit / load preserves all story flags, quest state, and player position from any point — test_save_load_slice.gd (mid-quest reload + fire-once cutscene survives), 49/49 tests
 - [x] Full-slice playthrough test: automated flag/quest/save chain green (test_village_quest + test_save_load_slice + test_cutscene/shore); human end-to-end playthrough confirmed 2026-07-21 (tower climb, dialogue toast timing, camera framing, quest-toast readability, village visual fixes, writing pass all checked)
-- [ ] Friend playtest against success criteria; log every unprompted world question they ask *(human)*
-- [ ] Bug fixes, with regression tests for anything touching GameState/quests/saves *(as found)*
+- [x] Friend playtest against success criteria *(human)* — **closed 2026-08-12 on user instruction.** No unprompted-world-question log was captured into the repo; if notes were taken they live outside it. Recorded this way so a future session doesn't go looking for findings that aren't here.
+- [x] Bug fixes, with regression tests for anything touching GameState/quests/saves *(as found)* — closed with the milestone 2026-08-12; nothing outstanding was reported. The standing rule survives the milestone: any future bug touching GameState/quests/saves still gets a regression test.
 - [x] **SCOPE ADDITION (human decision, 2026-07-27):** two optional flavor NPCs given dialogue — **Elder Mishka** and **the blacksmith**. Both were already placed in `zone_01_village.tscn` as bare meshes and already named in `docs/zones/zone_01_home_village.md`, so this completes written Gate-0 intent rather than inventing new scope. Mishka delivers first-hand the thick-mist warning that `friend.dtl` already lets the player quote second-hand, plus a darkness/foreshadowing beat. **Deliberately NOT wired into `village_quest.tres`** — optional world-building only, so the quest chain and its save-safe stage indices are untouched. New flags `act1/talked_to_elder`, `act1/talked_to_blacksmith`. Prose is Claude-drafted and **needs a human writing pass.**
 
 ### Explicit non-goals for this milestone (from GAME_PITCH.md)

@@ -2,6 +2,13 @@
 
 Carry this into the next session. Kept current so a fresh session can resume without re-deriving state.
 
+## ✅ MILESTONE 1 COMPLETE — closed 2026-08-12
+The friend playtest (ROADMAP Phase E) was **closed on user instruction**, and with it Milestone 1. The vertical slice is done: village → tower → shore, dialogue with a branching choice, a quest chain, the One Cinematic Moment, save/load, 65/65 tests green, a distributable Windows build, a playtester guide, and a feedback survey.
+
+**Recorded honestly so nobody hunts for missing artifacts:** no unprompted-world-question log was captured into the repo. If notes were taken they live outside it. The remaining Phase E box (bug fixes as found) was closed with the milestone — nothing outstanding was reported.
+
+**Next session does NOT start with code.** Milestone 2 is explicitly *sketch only, DO NOT BUILD* in ROADMAP ("second zone + interconnection, quest journal UI, ambient audio pass"). Per CLAUDE.md's milestone-discipline and two-phase rules, the next step is **scoping M2 and getting the plan approved** before anything is built. Also still unresolved and worth folding into that decision: the **art/asset pipeline** (`docs/ART_PIPELINE.md`) — graybox was a deliberate slice-only choice, and Claude cannot author binary art assets under the current rules.
+
 ## Dev tooling — git push identity: SOLVED via SSH (2026-08-12)
 **Just use `git push`.** The remote is SSH and this repo is pinned to its own key, so whichever GitHub account `gh` has active no longer matters. Verified end-to-end with the *wrong* (work) account active.
 
@@ -256,4 +263,4 @@ Distilled from the 2026-07-27 playtest round. The corrections matter more than t
    - Locally-built exes carry no internet zone marker, so **you will not see the SmartScreen prompt your testers do**. Its absence is not evidence the guide is wrong.
    - ⚠️ **The survey artifact is private until shared from its share menu** — confirm that before sending the guide, or the link is a dead end for the tester.
 
-Open the project in Godot 4.6.3 (Import `project.godot`) to run the friend playtest — that is the only thing left in Milestone 1.
+~~Open the project in Godot 4.6.3 to run the friend playtest~~ — **done; Milestone 1 closed 2026-08-12.** See the MILESTONE 1 COMPLETE section at the top. The next session opens with **scoping Milestone 2** (currently DO-NOT-BUILD sketch) plus the deferred art-pipeline decision — a planning conversation, not code.
