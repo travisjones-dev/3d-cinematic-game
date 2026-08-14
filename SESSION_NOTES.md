@@ -42,6 +42,15 @@ Blender MCP servers were considered and **declined** for the pipeline (they driv
 
 ⚠️ **Accepted risk, written down before it bites:** `test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** and *will* break as meshes are swapped. They are the guard against the "visible but unusable" bug class — **the wrong fix is loosening assertions until they pass.** Update them deliberately, per asset.
 
+## ⚠️ Imported art: three silent failure modes, all hit on 2026-08-14
+None of these throw an error. Each produces a valid asset that is visibly wrong, so they cost time out of proportion to their size.
+
+1. **White models.** A pack material with two `Material Output` nodes / a stray Diffuse BSDF makes the glTF exporter emit a **default** material — `{"doubleSided", "name"}` and no `pbrMetallicRoughness` — while the real colours sit unused on the Principled node. `export_glb.py` now rebuilds materials as one Principled → one active output. Writing `default_value` (ignored on a *linked* socket) and re-pointing the active output were both tried and **failed silently**.
+2. **T-posing characters.** An imported character with nothing driving its `AnimationPlayer` renders in bind pose. Use `scripts/components/idle_animator.gd` on NPCs; the player is driven from velocity in `player.gd`.
+3. **Clips that play once.** Every clip in the character pack imports `loop_mode=0`, so an idle or a walk freezes mid-stride. Set loop in the `.import` `_subresources`.
+
+Plus two geometry traps worth re-reading before any swap: characters are **feet-pivoted** while the player capsule and NPC Area3Ds are **centre-pivoted** (hence the −1.0 Y offsets), and **a bounding box cannot tell you which way a model faces** — the Warrior's AABB pointed the wrong way because the helmet extends further back than the face does forward.
+
 ## Asset credits — CREDITS.md (added 2026-08-14)
 **Every third-party asset gets an entry in `CREDITS.md` as it lands.** All CC0 so attribution is not *required*, but it is given deliberately and that file is the source for an in-game credits scene if the project ships. Adding art without adding it there means the artist quietly goes uncredited — nobody will remember where a `.glb` came from by the time that scene gets built. Poly Pizza is a distributor, not the author: credit Quaternius, mention Poly Pizza as source.
 
