@@ -22,7 +22,8 @@ so an unused pack can be dropped from the credits rather than crediting art that
 | **Stylized Nature MegaKit** | Quaternius | via [Poly Pizza](https://poly.pizza/bundle/Stylized-Nature-MegaKit-T34GZFA0fm) | Trees (`tree.tscn` + pine/twisted variants), the 156-tree outer forest, and the grass/fern/bush/flower/rock ground cover |
 | **Sparse Grass** (texture) | Poly Haven | [polyhaven.com/a/sparse_grass](https://polyhaven.com/a/sparse_grass) | Village ground diffuse + normal |
 | **Dirt Floor** (texture) | Poly Haven | [polyhaven.com/a/dirt_floor](https://polyhaven.com/a/dirt_floor) | The dirt path through the village centre |
-| **Modular Character Outfits – Fantasy** | Quaternius | [quaternius.com](https://quaternius.com/packs/modularcharacteroutfitsfantasy.html) | Elder Mishka (`Female_Peasant`). Ships rigged but **without animation clips** — posed by `rest_pose.gd` pending the Universal Animation Library |
+| **Modular Character Outfits – Fantasy** | Quaternius | [quaternius.com](https://quaternius.com/packs/modularcharacteroutfitsfantasy.html) | Elder Mishka (`Female_Peasant`). Ships rigged but with **no animation clips of its own** — driven by the Universal Animation Library below |
+| **Universal Animation Library** | Quaternius | [quaternius.com](https://quaternius.com/packs/universalanimationlibrary.html) | 43 clips on the universal humanoid rig. `Sitting_Idle` seats Elder Mishka on her bench; the rest are available to any character on this rig |
 
 ## Downloaded, staged for use
 
