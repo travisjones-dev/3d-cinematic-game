@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=3]
+[gd_scene load_steps=77 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="1_flavor"]
 [ext_resource type="Script" path="res://scripts/zones/zone_01_village.gd" id="2_zone"]
@@ -9,6 +9,9 @@
 [ext_resource type="PackedScene" path="res://assets/models/house_1.glb" id="7_house1"]
 [ext_resource type="PackedScene" path="res://assets/models/house_2.glb" id="8_house2"]
 [ext_resource type="PackedScene" path="res://assets/models/mill.glb" id="9_mill"]
+[ext_resource type="PackedScene" path="res://assets/models/stable.glb" id="10_stable"]
+[ext_resource type="Texture2D" path="res://assets/textures/grass_diff.jpg" id="11_grassdiff"]
+[ext_resource type="Texture2D" path="res://assets/textures/grass_nor.jpg" id="12_grassnor"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.38, 0.5, 0.72, 1)
@@ -60,8 +63,18 @@ size = Vector3(18, 6, 0.5)
 [sub_resource type="BoxShape3D" id="BarrierNorthGapShape"]
 size = Vector3(8.4, 6, 0.5)
 
+; Ground texture: Poly Haven "sparse_grass", CC0. The albedo_color is kept as a TINT rather than
+; reset to white — it multiplies the texture, so the olive-sage palette value still pushes the
+; ground toward the village's established colour instead of the pack/photo look taking over
+; wholesale. Lighter than the original 0.46,0.5,0.36 so the texture is not crushed dark.
+; uv1_scale 22 over a 44 m ground = one tile every 2 m, which is about life-size for this texture.
+; All three numbers are cheap to change if it reads wrong.
 [sub_resource type="StandardMaterial3D" id="GroundMat"]
-albedo_color = Color(0.46, 0.5, 0.36, 1)
+albedo_color = Color(0.85, 0.9, 0.72, 1)
+albedo_texture = ExtResource("11_grassdiff")
+normal_enabled = true
+normal_texture = ExtResource("12_grassnor")
+uv1_scale = Vector3(22, 22, 1)
 
 [sub_resource type="StandardMaterial3D" id="PathMat"]
 albedo_color = Color(0.56, 0.48, 0.38, 1)
@@ -306,73 +319,43 @@ shape = SubResource("MillShape2")
 [node name="Stables" type="StaticBody3D" parent="Geometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 1.75, -6)
 
-[node name="BackWall" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.85)
-mesh = SubResource("StableWallMesh")
-surface_material_override/0 = SubResource("WallMat")
+; VISUAL-ONLY swap — all seven CollisionShape3D pieces below are kept exactly as authored, and
+; that is load-bearing. The graybox stable is deliberately OPEN AT THE FRONT (back wall, ends,
+; dividers and posts carry collision; there is no front wall) and StableInteract sits at z=-4,
+; INSIDE the stable footprint. Collapsing this into one solid box would seal the front and make
+; "Greet your steed" physically unreachable — the exact visible-but-unusable class these tests
+; exist to catch. The pack stable measures 8.46 x 4.48 x 5.99 at 1.8 against the graybox's
+; 9 x 3.5 x 6, so the authored collision still fits the new art closely.
+[node name="Mesh" parent="Geometry/Stables" instance=ExtResource("10_stable")]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -1.75, 0)
 
 [node name="BackWallCollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.85)
 shape = SubResource("StableWallShape")
 
-[node name="EndWest" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0, 0)
-mesh = SubResource("StableEndMesh")
-surface_material_override/0 = SubResource("WallMat")
-
 [node name="EndWestCollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0, 0)
 shape = SubResource("StableEndShape")
-
-[node name="EndEast" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 0, 0)
-mesh = SubResource("StableEndMesh")
-surface_material_override/0 = SubResource("WallMat")
 
 [node name="EndEastCollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 0, 0)
 shape = SubResource("StableEndShape")
 
-[node name="DividerA" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
-mesh = SubResource("StableDividerMesh")
-surface_material_override/0 = SubResource("WallMat")
-
 [node name="DividerACollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 shape = SubResource("StableDividerShape")
-
-[node name="DividerB" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
-mesh = SubResource("StableDividerMesh")
-surface_material_override/0 = SubResource("WallMat")
 
 [node name="DividerBCollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 shape = SubResource("StableDividerShape")
 
-[node name="PostA" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 2.85)
-mesh = SubResource("StablePostMesh")
-surface_material_override/0 = SubResource("RoofMat")
-
 [node name="PostACollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 2.85)
 shape = SubResource("StablePostShape")
 
-[node name="PostB" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.85)
-mesh = SubResource("StablePostMesh")
-surface_material_override/0 = SubResource("RoofMat")
-
 [node name="PostBCollision" type="CollisionShape3D" parent="Geometry/Stables"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.85)
 shape = SubResource("StablePostShape")
-
-[node name="Roof" type="MeshInstance3D" parent="Geometry/Stables"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.95, 0)
-mesh = SubResource("StableRoofMesh")
-surface_material_override/0 = SubResource("RoofMat")
 
 [node name="GuardTower" type="StaticBody3D" parent="Geometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.5, 7)

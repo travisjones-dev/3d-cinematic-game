@@ -23,5 +23,9 @@ shape = SubResource("Col")
 ; origin, so the player's origin sits 1.0 m above the ground (test_village_boundaries.gd:27
 ; depends on exactly this). The imported Warrior is feet-pivoted, so without the offset it
 ; would float 1 m in the air.
+; Rotated 180 degrees on Y: the pack authors the character facing +Z, Godot's convention (and
+; player.gd:_face_travel_direction) is -Z forward, so unrotated he walks backwards. Confirmed by
+; eye 2026-08-14 — the bind-pose AABB is NOT a reliable read on facing, since the helmet extends
+; backwards further than the face does forwards.
 [node name="Warrior" parent="Model" instance=ExtResource("2_warrior")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -1, 0)
