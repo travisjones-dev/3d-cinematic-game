@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3]
+[gd_scene load_steps=85 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="1_flavor"]
 [ext_resource type="Script" path="res://scripts/zones/zone_01_village.gd" id="2_zone"]
@@ -14,6 +14,11 @@
 [ext_resource type="Texture2D" path="res://assets/textures/grass_nor.jpg" id="12_grassnor"]
 [ext_resource type="PackedScene" path="res://scenes/props/tree_pine.tscn" id="13_pine"]
 [ext_resource type="PackedScene" path="res://scenes/props/tree_twisted.tscn" id="14_twisted"]
+[ext_resource type="PackedScene" path="res://assets/models/wizard.gltf" id="15_wizard"]
+[ext_resource type="PackedScene" path="res://assets/models/monk.gltf" id="16_monk"]
+[ext_resource type="PackedScene" path="res://assets/models/ranger.gltf" id="17_ranger"]
+[ext_resource type="Script" path="res://scripts/components/idle_animator.gd" id="18_idle"]
+[ext_resource type="PackedScene" path="res://assets/models/bell_tower.glb" id="19_belltower"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.38, 0.5, 0.72, 1)
@@ -218,6 +223,9 @@ size = Vector3(4.0, 5.85, 6.16)
 [sub_resource type="BoxShape3D" id="MillShape2"]
 size = Vector3(6.12, 8.64, 4.91)
 
+[sub_resource type="BoxShape3D" id="TowerShape2"]
+size = Vector3(3.5, 9, 4.05)
+
 [sub_resource type="BoxMesh" id="AnvilMesh"]
 size = Vector3(1.2, 1, 0.8)
 
@@ -362,32 +370,31 @@ shape = SubResource("StablePostShape")
 [node name="GuardTower" type="StaticBody3D" parent="Geometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.5, 7)
 
-[node name="Mesh" type="MeshInstance3D" parent="Geometry/GuardTower"]
-mesh = SubResource("TowerMesh")
-surface_material_override/0 = SubResource("TowerStoneMat")
+; Tower art swapped to the pack's Bell_Tower (3.49 x 8.57 x 4.01 at 1.8, against the graybox's
+; 3.5 x 9 x 3.5 — near-exact). The graybox Mesh, the leaning CrackedTop, its Roof and the Door
+; are all replaced by it; the model carries its own crown, roof and doorway.
+;
+; ⚠️ THE `Crack` MESH IS DELIBERATELY KEPT. It is not decoration — the writing points at it:
+;   dialogue/act1/friend.dtl:17  "He gestures toward the CRACKED TOWER behind you."
+;   dialogue/act1/love.dtl:4     "the top of the CRACKED steps"
+;   docs/zones/zone_01_home_village.md:17  "cracked, age-worn stone"
+; A pristine bell tower would leave the friend gesturing at a building that contradicts his line,
+; and the tower is one of the three environmental-storytelling setups. Story is pillar #1, so the
+; art improves but the tower must still READ as cracked. If the crack no longer lands visually
+; against the new silhouette, the fix is a better crack — not deleting it and quietly editing the
+; dialogue to match.
+[node name="Mesh" parent="Geometry/GuardTower" instance=ExtResource("19_belltower")]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -4.5, 0)
 
+; Depth widened 3.5 -> 4.05 to match the new silhouette. TowerInteract sits at x=-11.9, outside
+; the tower's x range (-15.75..-12.25), so the doorway stays reachable.
 [node name="Collision" type="CollisionShape3D" parent="Geometry/GuardTower"]
-shape = SubResource("TowerShape")
-
-[node name="CrackedTop" type="MeshInstance3D" parent="Geometry/GuardTower"]
-transform = Transform3D(0.98, 0.17, 0, -0.17, 0.98, 0, 0, 0, 1, 0.4, 5.5, 0.2)
-mesh = SubResource("TowerTopMesh")
-surface_material_override/0 = SubResource("TowerStoneMat")
-
-[node name="Roof" type="MeshInstance3D" parent="Geometry/GuardTower/CrackedTop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
-mesh = SubResource("TowerRoofMesh")
-surface_material_override/0 = SubResource("RoofMat")
+shape = SubResource("TowerShape2")
 
 [node name="Crack" type="MeshInstance3D" parent="Geometry/GuardTower"]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 1.8, 0, 0.3)
 mesh = SubResource("CrackMeshEast")
 surface_material_override/0 = SubResource("CrackMat")
-
-[node name="Door" type="MeshInstance3D" parent="Geometry/GuardTower"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.83, -3.5, -1)
-mesh = SubResource("DoorMeshEast")
-surface_material_override/0 = SubResource("DoorMat")
 
 [node name="Home1" type="StaticBody3D" parent="Geometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 9)
@@ -649,9 +656,14 @@ script = ExtResource("3_npc")
 prompt = "Speak with Elder Mishka"
 timeline = "res://dialogue/act1/elder.dtl"
 
-[node name="Mesh" type="MeshInstance3D" parent="NPCs/Elder"]
-mesh = SubResource("NpcMesh")
-surface_material_override/0 = SubResource("ElderMat")
+; Elder Mishka as the pack's Wizard — the closest read on an elder in this cast.
+; y = -1: the Area3D sits at world y=1 (centre of the old 2 m capsule) while the imported
+; character is feet-pivoted, so without the offset he floats a metre up. Same trap as the player.
+; No Y rotation: these models face +Z natively, which is toward the player's approach here.
+; The idle_animator script is what stops him standing in a T-pose.
+[node name="Mesh" parent="NPCs/Elder" instance=ExtResource("15_wizard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("18_idle")
 
 [node name="Trigger" type="CollisionShape3D" parent="NPCs/Elder"]
 shape = SubResource("TriggerShape")
@@ -662,9 +674,9 @@ script = ExtResource("3_npc")
 prompt = "Talk to the blacksmith"
 timeline = "res://dialogue/act1/blacksmith.dtl"
 
-[node name="Mesh" type="MeshInstance3D" parent="NPCs/Blacksmith"]
-mesh = SubResource("NpcMesh")
-surface_material_override/0 = SubResource("SmithMat")
+[node name="Mesh" parent="NPCs/Blacksmith" instance=ExtResource("16_monk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("18_idle")
 
 [node name="Trigger" type="CollisionShape3D" parent="NPCs/Blacksmith"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.25)
@@ -676,9 +688,9 @@ script = ExtResource("3_npc")
 prompt = "Talk to your friend"
 timeline = "res://dialogue/act1/friend.dtl"
 
-[node name="Mesh" type="MeshInstance3D" parent="NPCs/Friend"]
-mesh = SubResource("NpcMesh")
-surface_material_override/0 = SubResource("FriendMat")
+[node name="Mesh" parent="NPCs/Friend" instance=ExtResource("17_ranger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("18_idle")
 
 [node name="Trigger" type="CollisionShape3D" parent="NPCs/Friend"]
 shape = SubResource("TriggerShape")

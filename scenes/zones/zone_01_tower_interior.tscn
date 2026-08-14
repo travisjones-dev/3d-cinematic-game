@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://coutofil5gipv" path="res://scripts/components/zone_exit.gd" id="2_exit"]
 [ext_resource type="Shader" path="res://shaders/soft_dot.gdshader" id="3_softdot"]
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="4_flavor"]
+[ext_resource type="PackedScene" path="res://assets/models/cleric.gltf" id="5_cleric"]
+[ext_resource type="Script" path="res://scripts/components/idle_animator.gd" id="6_idle"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.3, 0.32, 0.36, 1)
@@ -1135,9 +1137,16 @@ script = ExtResource("1_npc")
 timeline = "res://dialogue/act1/love.dtl"
 prompt = "Speak with Aeia"
 
-[node name="Mesh" type="MeshInstance3D" parent="Interactables/Aeia" unique_id=2146903078]
-mesh = SubResource("NpcMesh")
-surface_material_override/0 = SubResource("LoveMat")
+; Aeia as the pack's Cleric. y = -1 puts her feet on the top platform (surface y=8.9) rather
+; than a metre above it — the Area3D sits at 9.9, the centre of the old capsule.
+;
+; Note this node's name and zero offset are load-bearing: test_interaction_alignment exists
+; BECAUSE Aeia's Mesh once carried a stray offset that put her visible body outside her own
+; trigger, so "standing right in front of her" would not start the conversation. Keep the mesh
+; centred on the Area3D and let the Area3D carry the position.
+[node name="Mesh" parent="Interactables/Aeia" instance=ExtResource("5_cleric")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("6_idle")
 
 [node name="Trigger" type="CollisionShape3D" parent="Interactables/Aeia" unique_id=1753897263]
 shape = SubResource("AeiaTriggerShape")

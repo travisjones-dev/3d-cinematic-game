@@ -91,20 +91,47 @@ func test_upper_walls_close_the_gap_between_old_wall_top_and_ceiling() -> void:
 
 	assert_eq(checked, 4, "should have checked all four upper walls")
 
-func test_village_guard_tower_has_a_matching_roof() -> void:
-	# The interior now reads as a roofed tower, so the prop you see from the village must agree.
+func test_village_guard_tower_still_reads_as_cracked() -> void:
+	# ── REPLACED 2026-08-14, deliberately, when the tower got its art pass ──────────────────
+	# This used to assert that `GuardTower/CrackedTop/Roof` existed and inherited the leaning
+	# crown's tilt. The art swap replaced the graybox shaft, leaning crown and roof with the
+	# pack's Bell_Tower, which carries its own crown and roof — so those nodes are gone and that
+	# assertion could not survive. It was rewritten rather than deleted, because the guarantee
+	# underneath it still matters; only the geometry expressing it changed.
+	#
+	# What it guards NOW is stronger, and is a story dependency rather than a modelling detail.
+	# The writing points directly at the crack:
+	#   dialogue/act1/friend.dtl:17  "He gestures toward the CRACKED TOWER behind you."
+	#   dialogue/act1/love.dtl:4     "the top of the CRACKED steps"
+	#   docs/zones/zone_01_home_village.md:17  "cracked, age-worn stone"
+	# Delete the Crack and the friend gestures at a building that contradicts his own line. That
+	# is a narrative break, not a visual nitpick, and it is exactly the kind of thing a future art
+	# pass would remove without noticing — hence a test.
+	#
+	# Whether the tower LOOKS roofed is now human-verified, like all art. Whether it still reads
+	# as cracked is machine-guarded here, because the dialogue depends on it.
 	var nodes: Dictionary = _read_scene(VILLAGE)
-	var path: String = "./Geometry/GuardTower/CrackedTop/Roof"
-	assert_true(nodes.has(path), "the village GuardTower has no Roof — it contradicts the interior")
+	var path: String = "./Geometry/GuardTower/Crack"
+
+	assert_true(nodes.has(path),
+		"the village GuardTower has no Crack — friend.dtl gestures at a 'cracked tower', so this "
+		+ "is a narrative break. If the art now expresses the crack itself, update this test "
+		+ "deliberately; do not just delete it.")
 	if not nodes.has(path):
 		return
 
-	# Parented to CrackedTop so it inherits the crown's lean; a roof standing upright on a leaning
-	# ruin would read as a mistake. The crown leans about -9.85 degrees, so compare the magnitude —
-	# asserting a positive euler.z would fail on the sign, not on the geometry.
-	var lean: Basis = _global_of(nodes, path).basis
-	assert_gt(absf(lean.get_euler().z), 0.05,
-		"the village tower roof is upright but the cracked crown leans — it should inherit the lean")
+	var crack: AABB = _mesh_box(nodes, path)
+	var tower: AABB = _mesh_box(nodes, "./Geometry/GuardTower")
+
+	# The crack must actually be ON the tower. A crack left floating beside it after the shaft was
+	# resized would still pass a mere existence check while reading as a stray dark box.
+	assert_true(tower.grow(0.75).intersects(crack),
+		"the Crack at %s is not on the tower body %s — it reads as a floating prop" % [crack, tower])
+
+	# And it must be a vertical fracture running up the wall, not a flat sliver on the ground.
+	assert_gt(crack.size.y, 2.0,
+		"the Crack is only %.2f m tall — too small to read as the fracture the dialogue points at"
+			% crack.size.y)
 
 ## Reads a .tscn without instantiating it. See tests/helpers/scene_geometry.gd.
 func _read_scene(path: String) -> Dictionary:
