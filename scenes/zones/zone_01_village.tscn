@@ -1,4 +1,4 @@
-[gd_scene load_steps=93 format=3]
+[gd_scene load_steps=94 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="1_flavor"]
 [ext_resource type="Script" path="res://scripts/zones/zone_01_village.gd" id="2_zone"]
@@ -25,6 +25,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/ground_cover.tscn" id="23_cover"]
 [ext_resource type="PackedScene" path="res://assets/models/characters/Female_Peasant.gltf" id="24_peasant"]
 [ext_resource type="Script" path="res://scripts/components/rest_pose.gd" id="25_rest"]
+[ext_resource type="PackedScene" path="res://assets/models/bench_1.glb" id="26_bench"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.38, 0.5, 0.72, 1)
@@ -720,12 +721,23 @@ timeline = "res://dialogue/act1/elder.dtl"
 ; rest_pose.gd, NOT idle_animator.gd — this pack ships rigged models with NO animation clips at
 ; all (they are driven by the separate Universal Animation Library), so there is no Idle to play
 ; and she would otherwise stand in a T-pose. rest_pose just swings the arms down.
+; y = -1.45, not -1. Standing puts her feet on the ground with the Area3D at world y=1; seated,
+; her pelvis must meet the bench instead. Rest pelvis is 1.100 above her origin and the bench seat
+; is 0.57, so she drops 0.45. Posing the legs moves her FEET, not her hips — the pelvis is the root
+; of the leg chain — so the whole model has to come down for her to make contact with the seat.
 [node name="Mesh" parent="NPCs/Elder" instance=ExtResource("24_peasant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.45, 0)
 script = ExtResource("25_rest")
+seated = true
 
 [node name="Trigger" type="CollisionShape3D" parent="NPCs/Elder"]
 shape = SubResource("TriggerShape")
+
+; Mishka's bench. No collision, like the other scatter props — the player must be able to walk up
+; to her, and a collider here could block her own interaction trigger. Placed at her position with
+; its long axis on X, perpendicular to her +Z facing, so she sits along it rather than across it.
+[node name="Bench" parent="NPCs/Elder" instance=ExtResource("26_bench")]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -1, 0)
 
 [node name="Blacksmith" type="Area3D" parent="NPCs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, -1.5)
