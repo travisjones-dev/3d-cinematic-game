@@ -229,17 +229,25 @@ size = Vector3(0.22, 1.3, 0.22)
 ; (auto-derived collision is what brings back the capsule seam-freeze class). The pack's houses
 ; are tall townhouses rather than the graybox's squat 6x4x6 cottages, so the old boxes would have
 ; left invisible walls standing ~1 m out from the visible walls.
-; Houses scaled 1.8 -> 2.3 on 2026-08-14 ("the houses feel a little small to the character").
-; house_1 4.92 x 7.80 x 6.12, house_2 5.11 x 7.48 x 7.87 — roughly 3.9x the 2 m player rather
-; than 3.0x. Only the HOUSES moved: the mill, stables and bell tower still land on their graybox
-; envelopes at 1.8 and were not flagged as small. The tower especially must NOT grow — at 1.8 it
-; is 3.49 wide against a TowerInteract only 2.1 m off its centre, so widening it would swallow
-; the "Enter the tower" trigger inside the tower's own collision and make it unreachable.
+; Houses scaled 1.8 -> 2.3 -> 2.9 (2026-08-14). The 2.9 comes from the DOORWAYS, which is what
+; was actually wrong: these models put a door at roughly 0.8 model units, so at 2.3 it stood
+; 1.84 m against a 2.0 m player — a door the character could not walk through. 0.8 x 2.9 = 2.32 m.
+;
+; Sizes below are the ROTATED footprints (see the Mesh nodes): the houses are turned 90 degrees to
+; face the path, so the model's x and z extents swap in the collision box.
+;
+; Only the HOUSES scale up. The others each break something specific if they grow, which is why
+; they are pinned at 1.8 rather than left alone by oversight:
+;   - Bell tower: 3.49 wide with TowerInteract only 2.1 m off its centre. Growing it swallows the
+;     "Enter the tower" trigger inside the tower's own collision and makes the tower unenterable.
+;   - Mill: growing it past x=-16.4 swallows Props/CarvedHeart, the zone's optional discovery.
+;   - Stables: has a separate orientation problem (its open side faces -X while the authored
+;     collision opens at +Z), which should be fixed before its size is touched.
 [sub_resource type="BoxShape3D" id="Home1Shape"]
-size = Vector3(4.92, 7.8, 6.12)
+size = Vector3(7.71, 9.83, 6.21)
 
 [sub_resource type="BoxShape3D" id="Home2Shape"]
-size = Vector3(5.11, 7.48, 7.87)
+size = Vector3(9.92, 9.43, 6.44)
 
 [sub_resource type="BoxShape3D" id="MillShape2"]
 size = Vector3(6.12, 8.64, 4.91)
@@ -404,8 +412,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.5, 7)
 ; lines still land. Human-judged on 2026-08-14 — which is the right way to settle it, since
 ; whether art "reads as cracked" is exactly the kind of call that cannot be made from geometry.
 ; The dialogue is unchanged and needs no writing pass.
+; Rotated 180 on Y so the doorway faces +X, where TowerInteract sits at (-11.9, 1.3, 6) — the
+; "Enter the tower" prompt now appears at the actual door instead of on the blank far wall.
 [node name="Mesh" parent="Geometry/GuardTower" instance=ExtResource("19_belltower")]
-transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -4.5, 0)
+transform = Transform3D(-1.8, 0, 0, 0, 1.8, 0, 0, 0, -1.8, 0, -4.5, 0)
 
 ; Depth widened 3.5 -> 4.05 to match the new silhouette. TowerInteract sits at x=-11.9, outside
 ; the tower's x range (-15.75..-12.25), so the doorway stays reachable.
@@ -423,21 +433,31 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 9)
 ; Scale 1.8 is the pack-wide factor (stable/bell_tower/mill all land on their graybox dimensions
 ; at 1.8, which is what identified it). y = -2 because the StaticBody3D sits at world y=2 while
 ; the imported art is base-pivoted.
+; Rotated -90 degrees on Y so the doorway faces -X, toward the dirt path (Home1 sits east of it).
+; The pack authors these houses facing +Z — established by ray-casting house_2, whose doorway
+; shows as a 1.70-wide recess on its +Z face. house_1's door reads as flush rather than recessed
+; so it could not be measured directly; it is assumed to share the pack's convention. If house_1
+; ends up backwards, negate both non-zero terms of the X and Z basis columns to flip it 180.
 [node name="Mesh" parent="Geometry/Home1" instance=ExtResource("7_house1")]
-transform = Transform3D(2.3, 0, 0, 0, 2.3, 0, 0, 0, 2.3, 0, -2, 0)
+transform = Transform3D(0, 0, 2.9, 0, 2.9, 0, -2.9, 0, 0, 0, -2, 0)
 
 [node name="Collision" type="CollisionShape3D" parent="Geometry/Home1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.92, 0)
 shape = SubResource("Home1Shape")
 
+; Moved north z=11 -> 13 (2026-08-14). At 2.9 the house is 6.44 m deep, which at z=11 pushed its
+; collision to x=-13.96 / z=7.78 and INTERSECTED the guard tower (x -15.75..-12.25, z 5..9). Two
+; solid bodies overlapping is a bug you only notice by walking into it. Moving north clears the
+; tower on the z axis outright rather than shaving the x overlap to a hairline.
 [node name="Home2" type="StaticBody3D" parent="Geometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2, 11)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2, 13)
 
+; Rotated +90 so its doorway faces +X, toward the path (Home2 sits west of it).
 [node name="Mesh" parent="Geometry/Home2" instance=ExtResource("8_house2")]
-transform = Transform3D(2.3, 0, 0, 0, 2.3, 0, 0, 0, 2.3, 0, -2, 0)
+transform = Transform3D(0, 0, -2.9, 0, 2.9, 0, 2.9, 0, 0, 0, -2, 0)
 
 [node name="Collision" type="CollisionShape3D" parent="Geometry/Home2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.74, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.72, 0)
 shape = SubResource("Home2Shape")
 
 [node name="Weather" type="Node3D" parent="."]
