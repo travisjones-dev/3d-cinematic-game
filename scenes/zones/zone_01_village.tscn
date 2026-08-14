@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=3]
+[gd_scene load_steps=96 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="1_flavor"]
 [ext_resource type="Script" path="res://scripts/zones/zone_01_village.gd" id="2_zone"]
@@ -23,7 +23,9 @@
 [ext_resource type="Texture2D" path="res://assets/textures/dirt_nor.jpg" id="21_dirtnor"]
 [ext_resource type="PackedScene" path="res://scenes/props/forest_ring.tscn" id="22_forest"]
 [ext_resource type="PackedScene" path="res://scenes/props/ground_cover.tscn" id="23_cover"]
-[ext_resource type="PackedScene" path="res://assets/models/characters/Female_Peasant.gltf" id="24_peasant"]
+[ext_resource type="PackedScene" path="res://assets/models/characters/Superhero_Female_FullBody.gltf" id="24_peasant"]
+[ext_resource type="PackedScene" path="res://assets/models/characters/Female_Peasant.gltf" id="27_outfit"]
+[ext_resource type="PackedScene" path="res://assets/models/characters/Hair_Buns.gltf" id="28_hair"]
 [ext_resource type="Script" path="res://scripts/components/animated_character.gd" id="25_rest"]
 [ext_resource type="PackedScene" path="res://assets/models/bench_1.glb" id="26_bench"]
 
@@ -741,12 +743,17 @@ timeline = "res://dialogue/act1/elder.dtl"
 ; that she is a woman: "her bench", "She takes your hand in both of hers", "It is only the season,
 ; grandmother", "Do not let an old woman be the last voice you hear today."
 ;
-; Now the Modular Character Outfits pack's Female_Peasant: female, plainly dressed, village-scaled.
-; Not specifically ELDERLY — CC0 does not seem to offer one — so she reads as an older villager
-; rather than a grandmother. Flagged rather than pretended otherwise.
+; She is assembled from THREE packs, because Quaternius splits a character across them:
+;   base body (incl. head)  Universal Base Characters — Superhero_Female_FullBody
+;   clothing                Modular Character Outfits — Female_Peasant (arms/body/legs/feet)
+;   hair                    Universal Base Characters — Hair_Buns
+; The outfit alone is a headless set of clothes, which is exactly how she first appeared. All
+; three are skinned to the same universal humanoid, so animated_character.gd fits the clothing and
+; hair onto the base body's skeleton at load.
 ;
-; scale 1.18 (model 1.525 m -> 1.80 m): deliberately shorter than the 2.0 m player, which does
-; some of the work of reading as an older, smaller woman.
+; No scale override: the base body is 1.775 m against the 2.0 m player, which already reads as a
+; smaller, older woman. She is still not specifically ELDERLY — the free tier ships only
+; "Superhero" proportions — so she reads as an older villager rather than a grandmother.
 ;
 ; animated_character.gd plays `Sitting_Idle` from the Universal Animation Library, which the pack
 ; is designed to be driven by. This replaces the hand-computed bone posing that stood in for it:
@@ -763,6 +770,10 @@ timeline = "res://dialogue/act1/elder.dtl"
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -1, 0)
 script = ExtResource("25_rest")
 clip = &"Sitting_Idle"
+; Typed arrays need the explicit form in .tscn. A bare [ ... ] does not satisfy
+; Array[PackedScene]: the assignment fails and the parser then DROPS the sibling nodes after it,
+; which showed up as the Elder losing both her Trigger and her Mesh entirely.
+layers = Array[PackedScene]([ExtResource("27_outfit"), ExtResource("28_hair")])
 
 [node name="Trigger" type="CollisionShape3D" parent="NPCs/Elder"]
 shape = SubResource("TriggerShape")

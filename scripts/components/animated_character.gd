@@ -28,6 +28,19 @@ const LIBRARY_PATH: String = "res://assets/models/characters/universal_animation
 ## different pose on reload would be worse than the synchronisation it fixes.
 @export var stagger: bool = true
 
+@export_group("Layers")
+## Clothing and hair to fit onto this character's skeleton.
+##
+## Quaternius splits a character across packs: Universal Base Characters supplies the BODY (one
+## mesh including the head, plus separate eyes and eyebrows), Modular Character Outfits supplies
+## CLOTHING as separate arm/body/leg/foot meshes, and the hairstyles are separate again. An outfit
+## on its own is a headless set of clothes — which is exactly what shipped here first.
+##
+## All of them are skinned to the same universal humanoid, so a layer's meshes can simply be
+## re-parented onto this character's Skeleton3D and they deform with it. Godot binds a Skin to
+## bones by NAME, which is what makes this work across files.
+@export var layers: Array[PackedScene] = []
+
 ## The library is ~7 MB and shared by every character using it, so it is loaded once per run and
 ## reused rather than instantiated per NPC.
 static var _library: AnimationLibrary = null
@@ -51,9 +64,13 @@ static func _shared_library() -> AnimationLibrary:
 
 
 func _ready() -> void:
-	if find_child("Skeleton3D", true, false) == null:
+	var skeleton: Skeleton3D = find_child("Skeleton3D", true, false) as Skeleton3D
+	if skeleton == null:
 		push_warning("animated_character: no Skeleton3D under %s" % name)
 		return
+
+	for layer in layers:
+		_fit_layer(skeleton, layer)
 
 	var library: AnimationLibrary = _shared_library()
 	if library == null:
@@ -75,3 +92,30 @@ func _ready() -> void:
 		var animation: Animation = library.get_animation(clip)
 		var seed: float = absf(global_position.x * 7.31 + global_position.z * 3.77)
 		player.seek(fmod(seed, animation.length), true)
+
+
+## Re-parents a layer scene's skinned meshes onto this character's skeleton.
+##
+## Only the mesh + skin are taken, not the layer's own Armature/Skeleton3D — two skeletons would
+## mean two things to animate, and only one of them would be driven. Because the Skin binds by
+## bone name and every one of these packs uses the same universal humanoid, the transplanted mesh
+## deforms with this character's skeleton for free.
+func _fit_layer(skeleton: Skeleton3D, layer: PackedScene) -> void:
+	if layer == null:
+		return
+	var instance: Node = layer.instantiate()
+	var fitted: int = 0
+	for node in instance.find_children("*", "MeshInstance3D", true, false):
+		var source: MeshInstance3D = node
+		var piece := MeshInstance3D.new()
+		piece.name = source.name
+		piece.mesh = source.mesh
+		piece.skin = source.skin
+		piece.transform = source.transform
+		skeleton.add_child(piece)
+		# NodePath is relative to the MeshInstance3D, so ".." is the skeleton it now hangs under.
+		piece.skeleton = NodePath("..")
+		fitted += 1
+	instance.free()
+	if fitted == 0:
+		push_warning("animated_character: layer %s contributed no meshes" % layer.resource_path)
