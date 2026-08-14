@@ -99,11 +99,11 @@ func test_village_guard_tower_is_still_visible_from_the_village() -> void:
 	# because the dialogue points at a "cracked tower" — then the crack was removed outright on
 	# explicit instruction the same day.
 	#
-	# ⚠️ That leaves a KNOWN, ACCEPTED narrative loose end, recorded here because a test is where
-	# someone will look: `dialogue/act1/friend.dtl:17` still gestures toward "the cracked tower"
-	# and `love.dtl:4` still says "the cracked steps". Those lines describe something that no
-	# longer exists and need a human writing pass. Deliberately NOT asserted — the decision was
-	# made with the consequence flagged, and a failing test would just nag about a settled call.
+	# The dialogue still references a cracked tower (`friend.dtl:17`, `love.dtl:4`). That was
+	# raised as a possible narrative break and RESOLVED on 2026-08-14: the Bell_Tower asset reads
+	# as old and cracked on its own, so the lines still land and the dialogue was left unchanged.
+	# Nothing is outstanding here. Recorded so the question is not re-opened every time someone
+	# greps for "cracked" and finds dialogue pointing at a mesh that no longer exists.
 	#
 	# What survives is the weakest useful guarantee: the tower is still THERE and still has
 	# geometry. That catches an art swap that leaves the node empty — the silent-blank failure

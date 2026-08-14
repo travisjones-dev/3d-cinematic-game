@@ -395,14 +395,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.5, 7)
 ; 3.5 x 9 x 3.5 — near-exact). The graybox Mesh, the leaning CrackedTop, its Roof and the Door
 ; are all replaced by it; the model carries its own crown, roof and doorway.
 ;
-; Crack REMOVED 2026-08-14 on explicit instruction ("remove the crack entirely, definitely not
-; needed") after being flagged as a story dependency. ⚠️ OUTSTANDING WRITING PASS: the dialogue
-; still points at a crack that no longer exists —
+; The separate graybox `Crack` mesh was removed 2026-08-14. It had been flagged as a story
+; dependency, because the writing points at a cracked tower —
 ;   dialogue/act1/friend.dtl:17  "He gestures toward the CRACKED TOWER behind you."
 ;   dialogue/act1/love.dtl:4     "the top of the CRACKED steps"
 ;   docs/zones/zone_01_home_village.md:17  "cracked, age-worn stone"
-; Those lines need rewording by a human. Left untouched here because narrative is data and gets a
-; human writing pass (CLAUDE.md), not a silent edit to match a geometry change.
+; RESOLVED, no action outstanding: the Bell_Tower asset itself reads as old and cracked, so those
+; lines still land. Human-judged on 2026-08-14 — which is the right way to settle it, since
+; whether art "reads as cracked" is exactly the kind of call that cannot be made from geometry.
+; The dialogue is unchanged and needs no writing pass.
 [node name="Mesh" parent="Geometry/GuardTower" instance=ExtResource("19_belltower")]
 transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -4.5, 0)
 
