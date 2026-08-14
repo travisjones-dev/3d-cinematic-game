@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+; Pine variant of tree.tscn — same rules (scale 1.0, no collision, child named "Mesh").
+; Exists so the 21 perimeter trees are not 21 copies of one silhouette.
+
+[ext_resource type="PackedScene" path="res://assets/models/nature/tree_pine.glb" id="1_pine"]
+
+[node name="TreePine" type="Node3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_pine")]

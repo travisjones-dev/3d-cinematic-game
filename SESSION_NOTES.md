@@ -42,6 +42,11 @@ Blender MCP servers were considered and **declined** for the pipeline (they driv
 
 ⚠️ **Accepted risk, written down before it bites:** `test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** and *will* break as meshes are swapped. They are the guard against the "visible but unusable" bug class — **the wrong fix is loosening assertions until they pass.** Update them deliberately, per asset.
 
+## Asset credits — CREDITS.md (added 2026-08-14)
+**Every third-party asset gets an entry in `CREDITS.md` as it lands.** All CC0 so attribution is not *required*, but it is given deliberately and that file is the source for an in-game credits scene if the project ships. Adding art without adding it there means the artist quietly goes uncredited — nobody will remember where a `.glb` came from by the time that scene gets built. Poly Pizza is a distributor, not the author: credit Quaternius, mention Poly Pizza as source.
+
+**Pack scale is measured, never assumed.** The Quaternius *village* pack needed **1.8×**; the Quaternius *nature* pack is authored at **1:1 and needs none**. Same artist, different scales. Measure every new pack against a known reference before placing anything.
+
 ## Dev tooling — git push identity: SOLVED via SSH (2026-08-12)
 **Just use `git push`.** The remote is SSH and this repo is pinned to its own key, so whichever GitHub account `gh` has active no longer matters. Verified end-to-end with the *wrong* (work) account active.
 

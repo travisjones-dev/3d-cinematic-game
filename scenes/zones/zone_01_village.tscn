@@ -1,4 +1,4 @@
-[gd_scene load_steps=77 format=3]
+[gd_scene load_steps=79 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/flavor_interactable.gd" id="1_flavor"]
 [ext_resource type="Script" path="res://scripts/zones/zone_01_village.gd" id="2_zone"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" path="res://assets/models/stable.glb" id="10_stable"]
 [ext_resource type="Texture2D" path="res://assets/textures/grass_diff.jpg" id="11_grassdiff"]
 [ext_resource type="Texture2D" path="res://assets/textures/grass_nor.jpg" id="12_grassnor"]
+[ext_resource type="PackedScene" path="res://scenes/props/tree_pine.tscn" id="13_pine"]
+[ext_resource type="PackedScene" path="res://scenes/props/tree_twisted.tscn" id="14_twisted"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.38, 0.5, 0.72, 1)
@@ -537,22 +539,22 @@ surface_material_override/0 = SubResource("HeartMat")
 [node name="Perimeter" type="Node3D" parent="."]
 
 [node name="Tree1" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 20)
+transform = Transform3D(0.4536, 0, -0.8912, 0, 1, 0, 0.8912, 0, 0.4536, -20, 0, 20)
 
-[node name="Tree2" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 20)
+[node name="Tree2" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(0.8253, 0, -0.5646, 0, 1, 0, 0.5646, 0, 0.8253, -13, 0, 20)
 
 [node name="Tree3" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 20)
 
-[node name="Tree4" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
+[node name="Tree4" parent="Perimeter" instance=ExtResource("14_twisted")]
+transform = Transform3D(0.2675, 0, -0.9636, 0, 1, 0, 0.9636, 0, 0.2675, 0, 0, 20)
 
 [node name="Tree5" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 20)
+transform = Transform3D(-0.6669, 0, -0.7451, 0, 1, 0, 0.7451, 0, -0.6669, 6, 0, 20)
 
-[node name="Tree6" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 20)
+[node name="Tree6" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(-0.5048, 0, -0.8632, 0, 1, 0, 0.8632, 0, -0.5048, 13, 0, 20)
 
 [node name="Tree7" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
@@ -560,32 +562,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
 [node name="Tree8" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -20)
 
-[node name="Tree9" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -20)
+[node name="Tree9" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(-0.971, 0, -0.2392, 0, 1, 0, 0.2392, 0, -0.971, -13, 0, -20)
 
 [node name="Tree10" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -20)
+transform = Transform3D(-0.3624, 0, 0.9320, 0, 1, 0, -0.9320, 0, -0.3624, 13, 0, -20)
 
-[node name="Tree11" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -20)
+[node name="Tree11" parent="Perimeter" instance=ExtResource("14_twisted")]
+transform = Transform3D(-0.8486, 0, 0.5298, 0, 1, 0, -0.5298, 0, -0.8486, 20, 0, -20)
 
 [node name="Tree12" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -13)
 
-[node name="Tree13" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -6)
+[node name="Tree13" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(-0.2108, 0, 0.9775, 0, 1, 0, -0.9775, 0, -0.2108, 20, 0, -6)
 
 [node name="Tree14" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
 
 [node name="Tree15" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 6)
+transform = Transform3D(0.9602, 0, 0.2794, 0, 1, 0, -0.2794, 0, 0.9602, 20, 0, 6)
 
 [node name="Tree16" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 13)
 
-[node name="Tree17" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -13)
+[node name="Tree17" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(0.5544, 0, 0.8323, 0, 1, 0, -0.8323, 0, 0.5544, -20, 0, -13)
 
 [node name="Tree18" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -6)
@@ -593,11 +595,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -6)
 [node name="Tree19" parent="Perimeter" instance=ExtResource("5_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0)
 
-[node name="Tree20" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 6)
+[node name="Tree20" parent="Perimeter" instance=ExtResource("13_pine")]
+transform = Transform3D(0.6216, 0, -0.7833, 0, 1, 0, 0.7833, 0, 0.6216, -20, 0, 6)
 
 [node name="Tree21" parent="Perimeter" instance=ExtResource("5_tree")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 13)
+transform = Transform3D(0.1367, 0, 0.9906, 0, 1, 0, -0.9906, 0, 0.1367, -20, 0, 13)
 
 [node name="Interactables" type="Node3D" parent="."]
 

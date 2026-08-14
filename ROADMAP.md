@@ -131,7 +131,10 @@ Also landed: `tools/blender/export_glb.py` (pins export settings; GUI equivalent
 - [ ] **Stables** — composite of ~10 graybox pieces (walls, ends, dividers, posts, roof) each with its own collision; the swap means consolidating them, and the steed + `StableInteract` sit inside. `stable.glb` fits the envelope almost exactly at 1.8, so this is worth doing — just not a blind five-minute job
 - [ ] **⚠️ Guard tower — DO NOT swap without a story decision.** `CrackedTop` leans deliberately and `Crack` is a separate fracture mesh: the cracked tower is one of the three environmental-storytelling setups (Phase D). A clean `bell_tower.glb` deletes that beat — **pillar #1**. `test_tower_roof.gd:87` also asserts the roof inherits the lean. Either keep the graybox, or swap and re-add a crack deliberately
 - [ ] Remaining cast (Friend, Aeia, Mishka, Blacksmith) from the same character pack — `Cleric`/`Ranger`/`Rogue`/`Wizard` map onto them
-- [ ] Trees → props (banners, anvil, carved heart); the props pack (`Well`, `Cart`, `Barrel`, `Hay`, `Bonfire_Lit`, `MarketStand`, `Fence`) is downloaded and staged for this
+- [x] **Trees (2026-08-14)** — Stylized Nature MegaKit. **Scale 1.0, not 1.8:** this pack is authored at 1:1 (9.44 m broadleaf, 8.72 m pine, 13.28 m dead) so it needs no scaling — measure each new pack rather than assuming the village pack's factor. Three variants (`tree.tscn` broadleaf, `tree_pine`, `tree_twisted`) across the 21 perimeter trees with varied Y rotations, so the treeline is not 21 copies of one silhouette. No collision, deliberately — `Barriers` remain the only thing bounding the play space
+- [x] **Ground texture** — Poly Haven `sparse_grass` (CC0), fetched via their public API. `albedo_color` kept as a palette **tint** rather than reset to white. Mipmaps had to be forced on (22× tiling would shimmer) and the normal map set to Enable rather than Detect
+- [ ] Props pass — `Well`, `Cart`, `Barrel`, `Hay`, `Bonfire_Lit`, `MarketStand`, `Fence` are downloaded and staged; plus the nature pack's `Bush`, `Fern`, `Grass`, `Flower Group`, `Mushroom`, `Rock` for ground cover
+- [ ] Remaining graybox props: banners, flowers, anvil, carved heart, the steed
 
 ### Phase 3 — Characters + animation engineering
 - [ ] Retarget one Mixamo source to the 2.0 m / feet-pivot spec; mount under the existing `Model` node

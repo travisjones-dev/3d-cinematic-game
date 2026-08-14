@@ -1,25 +1,19 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=2 format=3]
 
-[sub_resource type="BoxMesh" id="TrunkMesh"]
-size = Vector3(0.8, 4, 0.8)
+; Stylized Nature MegaKit (Quaternius, CC0 — see CREDITS.md). Used at scale 1.0: unlike the
+; village building pack (which needed 1.8x), this pack is authored at 1:1 real scale — a 9.44 m
+; broadleaf, 8.72 m pine and 13.28 m dead tree are all plausible real heights against a 2 m player.
+;
+; No offset on Y. The model's base sits at -0.24, so the roots sink slightly into the ground
+; instead of meeting it on a clean seam — which is what you want.
+;
+; NO COLLISION, deliberately. The perimeter trees are visual only; the Barriers are the sole
+; thing bounding the play space (see tests/test_village_boundaries.gd:17). Adding collision here
+; would change the playable space those tests assert on.
 
-[sub_resource type="StandardMaterial3D" id="TrunkMat"]
-albedo_color = Color(0.32, 0.22, 0.15, 1)
-
-[sub_resource type="BoxMesh" id="CanopyMesh"]
-size = Vector3(3.5, 3, 3.5)
-
-[sub_resource type="StandardMaterial3D" id="CanopyMat"]
-albedo_color = Color(0.16, 0.32, 0.15, 1)
+[ext_resource type="PackedScene" path="res://assets/models/nature/tree_broadleaf.glb" id="1_tree"]
 
 [node name="Tree" type="Node3D"]
 
-[node name="Trunk" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-mesh = SubResource("TrunkMesh")
-surface_material_override/0 = SubResource("TrunkMat")
-
-[node name="Canopy" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-mesh = SubResource("CanopyMesh")
-surface_material_override/0 = SubResource("CanopyMat")
+; Named "Mesh" to match the project convention that tests/helpers/scene_geometry.gd resolves.
+[node name="Mesh" parent="." instance=ExtResource("1_tree")]

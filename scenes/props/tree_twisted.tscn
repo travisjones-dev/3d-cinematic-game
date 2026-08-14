@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+; Twisted variant of tree.tscn — same rules (scale 1.0, no collision, child named "Mesh").
+; The tallest of the three at 15.66 m, so it reads as an older tree; used sparingly.
+
+[ext_resource type="PackedScene" path="res://assets/models/nature/tree_twisted.glb" id="1_twisted"]
+
+[node name="TreeTwisted" type="Node3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_twisted")]
