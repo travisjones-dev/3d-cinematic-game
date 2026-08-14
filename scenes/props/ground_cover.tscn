@@ -1,0 +1,328 @@
+[gd_scene load_steps=12 format=3]
+
+; GENERATED â€” grass, ferns, bushes, flowers and rocks scattered through the village so the ground
+; reads as lived-in rather than as a flat texture.
+;
+; Placement avoids building footprints, the dirt path, every NPC's standing spot, and the carved
+; heart behind the mill â€” a bush swallowing the optional discovery would be the "visible but
+; unusable" bug class, so the keep-out list is part of the generator, not an afterthought.
+;
+; NO COLLISION, deliberately: the player must be able to walk over grass. Collision on scatter
+; would also snag the CharacterBody3D capsule, which is the seam-freeze class this project has
+; already paid for once (see godot-multisegment-terrain).
+;
+; Deterministic: fixed-seed LCG (seed 20260814). Regenerating gives the same layout.
+[ext_resource type="PackedScene" path="res://assets/models/nature/bush.glb" id="1_bush"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/bush_flowers.glb" id="2_bushf"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/fern.glb" id="3_fern"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/grass.glb" id="4_grass"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/grass_wispy.glb" id="5_wispy"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/grass_tall.glb" id="6_tall"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/clover.glb" id="7_clover"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/flowers.glb" id="8_flowers"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/rock_medium.glb" id="9_rock"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/pebble_round.glb" id="10_pebr"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/pebble_square.glb" id="11_pebs"]
+
+[node name="GroundCover" type="Node3D"]
+
+[node name="C1" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.5107, 0, -1.3795, 0, 1.471, 0, 1.3795, 0, -0.5107, -7.5712, 0, -9.5449)
+[node name="C2" parent="." instance=ExtResource("11_pebs")]
+transform = Transform3D(-0.7555, 0, -0.0391, 0, 0.7565, 0, 0.0391, 0, -0.7555, -13.6461, 0, -19.4536)
+[node name="C3" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(0.525, 0, -0.9286, 0, 1.0668, 0, 0.9286, 0, 0.525, -13.9986, 0, -4.6701)
+[node name="C4" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.8749, 0, 0.7054, 0, 1.1239, 0, -0.7054, 0, -0.8749, -15.7265, 0, 15.2216)
+[node name="C5" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.0367, 0, 1.0438, 0, 1.0444, 0, -1.0438, 0, -0.0367, -2.8468, 0, -2.0523)
+[node name="C6" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.4142, 0, -0.7596, 0, 0.8651, 0, 0.7596, 0, -0.4142, -17.5843, 0, 5.2452)
+[node name="C7" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.8309, 0, 0.4722, 0, 0.9557, 0, -0.4722, 0, -0.8309, 4.9868, 0, -1.3833)
+[node name="C8" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.7024, 0, 0.1594, 0, 0.7203, 0, -0.1594, 0, 0.7024, -5.8605, 0, 1.7355)
+[node name="C9" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.8694, 0, 0.6555, 0, 1.0888, 0, -0.6555, 0, 0.8694, -18.2248, 0, -17.1953)
+[node name="C10" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.545, 0, -1.1352, 0, 1.2592, 0, 1.1352, 0, 0.545, -10.9685, 0, -13.9797)
+[node name="C11" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(1.0049, 0, 0.1548, 0, 1.0168, 0, -0.1548, 0, 1.0049, 20.4719, 0, -1.3236)
+[node name="C12" parent="." instance=ExtResource("11_pebs")]
+transform = Transform3D(-0.9767, 0, -1.014, 0, 1.4079, 0, 1.014, 0, -0.9767, 16.4485, 0, 12.7929)
+[node name="C13" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.6129, 0, 0.556, 0, 0.8275, 0, -0.556, 0, -0.6129, -9.2182, 0, 5.9295)
+[node name="C14" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.8206, 0, -0.4819, 0, 0.9517, 0, 0.4819, 0, 0.8206, -13.4214, 0, 18.1957)
+[node name="C15" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.721, 0, 0.1283, 0, 0.7323, 0, -0.1283, 0, -0.721, 19.6881, 0, 4.3888)
+[node name="C16" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.7074, 0, 1.1067, 0, 1.3134, 0, -1.1067, 0, 0.7074, -13.6614, 0, -1.741)
+[node name="C17" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.5597, 0, -0.9282, 0, 1.0839, 0, 0.9282, 0, -0.5597, 5.6009, 0, -2.384)
+[node name="C18" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-1.1365, 0, 0.723, 0, 1.347, 0, -0.723, 0, -1.1365, -13.9517, 0, 14.1251)
+[node name="C19" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.8095, 0, -0.1324, 0, 0.8202, 0, 0.1324, 0, 0.8095, 7.1609, 0, -13.2398)
+[node name="C20" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.4361, 0, -0.7571, 0, 0.8737, 0, 0.7571, 0, 0.4361, -3.3338, 0, 4.6185)
+[node name="C21" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.5442, 0, 0.8956, 0, 1.0479, 0, -0.8956, 0, -0.5442, 8.8866, 0, -17.2343)
+[node name="C22" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.1026, 0, 0.9967, 0, 1.002, 0, -0.9967, 0, 0.1026, -9.1953, 0, -14.7083)
+[node name="C23" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.8051, 0, 1.2458, 0, 1.4833, 0, -1.2458, 0, -0.8051, -16.4956, 0, -13.8044)
+[node name="C24" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.6784, 0, 1.1894, 0, 1.3693, 0, -1.1894, 0, 0.6784, -13.1726, 0, 16.6049)
+[node name="C25" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.4675, 0, -0.8232, 0, 0.9467, 0, 0.8232, 0, -0.4675, 12.6623, 0, 20.2922)
+[node name="C26" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.4016, 0, -0.6179, 0, 0.7369, 0, 0.6179, 0, 0.4016, -4.875, 0, 15.8955)
+[node name="C27" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.6744, 0, 0.3613, 0, 0.7651, 0, -0.3613, 0, 0.6744, 17.9333, 0, 2.6701)
+[node name="C28" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(-0.3089, 0, 1.0209, 0, 1.0666, 0, -1.0209, 0, -0.3089, -5.3861, 0, -7.9751)
+[node name="C29" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.9992, 0, -0.6912, 0, 1.215, 0, 0.6912, 0, 0.9992, 12.6241, 0, 17.2369)
+[node name="C30" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.8235, 0, 0.1116, 0, 0.831, 0, -0.1116, 0, -0.8235, 14.4184, 0, 19.3484)
+[node name="C31" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.7805, 0, 0.6066, 0, 0.9886, 0, -0.6066, 0, 0.7805, -13.7605, 0, -4.3825)
+[node name="C32" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.7455, 0, -0.5437, 0, 0.9227, 0, 0.5437, 0, 0.7455, -8.1339, 0, -8.5336)
+[node name="C33" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.9774, 0, 0.0662, 0, 0.9797, 0, -0.0662, 0, 0.9774, 15.8513, 0, 13.4555)
+[node name="C34" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(-0.2266, 0, -1.0813, 0, 1.1048, 0, 1.0813, 0, -0.2266, 16.7742, 0, -14.1766)
+[node name="C35" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.2534, 0, -0.8064, 0, 0.8453, 0, 0.8064, 0, 0.2534, -17.713, 0, 20.0414)
+[node name="C36" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.7443, 0, -0.3041, 0, 0.8041, 0, 0.3041, 0, 0.7443, -13.2269, 0, -20.0192)
+[node name="C37" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(1.0413, 0, -0.3005, 0, 1.0838, 0, 0.3005, 0, 1.0413, 7.5719, 0, 14.7087)
+[node name="C38" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.7335, 0, -0.8206, 0, 1.1007, 0, 0.8206, 0, -0.7335, 12.4954, 0, 17.2409)
+[node name="C39" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(1.0547, 0, -0.2753, 0, 1.09, 0, 0.2753, 0, 1.0547, 18.9162, 0, 16.8285)
+[node name="C40" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(-0.2913, 0, -1.2858, 0, 1.3184, 0, 1.2858, 0, -0.2913, -15.8463, 0, -4.5603)
+[node name="C41" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(0.0846, 0, -0.7186, 0, 0.7236, 0, 0.7186, 0, 0.0846, -11.2065, 0, -19.6146)
+[node name="C42" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.8004, 0, 0.9616, 0, 1.2511, 0, -0.9616, 0, -0.8004, 8.9308, 0, 1.5798)
+[node name="C43" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.6611, 0, 0.2694, 0, 0.7139, 0, -0.2694, 0, 0.6611, -18.4257, 0, 15.3072)
+[node name="C44" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.2059, 0, -0.8807, 0, 0.9044, 0, 0.8807, 0, -0.2059, 17.4667, 0, 12.4187)
+[node name="C45" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.658, 0, 0.2688, 0, 0.7108, 0, -0.2688, 0, -0.658, 13.2847, 0, 17.9649)
+[node name="C46" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-1.471, 0, 0.0544, 0, 1.472, 0, -0.0544, 0, -1.471, 9.3599, 0, -18.9963)
+[node name="C47" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.64, 0, -0.9973, 0, 1.185, 0, 0.9973, 0, 0.64, -13.9813, 0, 17.3852)
+[node name="C48" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(0.1451, 0, -0.7269, 0, 0.7412, 0, 0.7269, 0, 0.1451, 17.8156, 0, -11.0871)
+[node name="C49" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(1.1603, 0, 0.1448, 0, 1.1693, 0, -0.1448, 0, 1.1603, -13.1128, 0, -19.6223)
+[node name="C50" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(1.2112, 0, -0.2871, 0, 1.2448, 0, 0.2871, 0, 1.2112, 4.006, 0, 0.5424)
+[node name="C51" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.6174, 0, 0.3468, 0, 0.7081, 0, -0.3468, 0, 0.6174, -19.8365, 0, -19.967)
+[node name="C52" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(0.849, 0, -0.2509, 0, 0.8853, 0, 0.2509, 0, 0.849, 16.26, 0, 1.1979)
+[node name="C53" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.882, 0, 0.5786, 0, 1.0548, 0, -0.5786, 0, 0.882, 9.5575, 0, -13.5498)
+[node name="C54" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.0987, 0, -1.2711, 0, 1.2749, 0, 1.2711, 0, 0.0987, 14.6669, 0, 14.8686)
+[node name="C55" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.8996, 0, -0.9118, 0, 1.2809, 0, 0.9118, 0, -0.8996, -14.9038, 0, -3.5795)
+[node name="C56" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(1.4389, 0, -0.3824, 0, 1.4888, 0, 0.3824, 0, 1.4389, -15.1039, 0, 0.4378)
+[node name="C57" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.4362, 0, -1.1521, 0, 1.2319, 0, 1.1521, 0, 0.4362, -5.6001, 0, -19.7009)
+[node name="C58" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(1.1233, 0, -0.0707, 0, 1.1255, 0, 0.0707, 0, 1.1233, -20.1998, 0, 19.2109)
+[node name="C59" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-1.2135, 0, 0.2605, 0, 1.2412, 0, -0.2605, 0, -1.2135, 2.9732, 0, 13.2133)
+[node name="C60" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.64, 0, -0.5903, 0, 0.8707, 0, 0.5903, 0, 0.64, 7.0372, 0, -5.4885)
+[node name="C61" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-1.4031, 0, -0.3966, 0, 1.4581, 0, 0.3966, 0, -1.4031, 5.4502, 0, -13.8665)
+[node name="C62" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.752, 0, 0.1599, 0, 0.7689, 0, -0.1599, 0, -0.752, -20.0388, 0, -17.2213)
+[node name="C63" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.1496, 0, -0.8598, 0, 0.8727, 0, 0.8598, 0, 0.1496, 6.2263, 0, -4.1973)
+[node name="C64" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.2103, 0, 0.7466, 0, 0.7756, 0, -0.7466, 0, 0.2103, 9.467, 0, 5.49)
+[node name="C65" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(-0.0923, 0, -1.3665, 0, 1.3696, 0, 1.3665, 0, -0.0923, 12.5472, 0, -17.7414)
+[node name="C66" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.8923, 0, -0.7722, 0, 1.18, 0, 0.7722, 0, 0.8923, -8.5933, 0, 17.8223)
+[node name="C67" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.9374, 0, 0.376, 0, 1.01, 0, -0.376, 0, -0.9374, 5.5363, 0, -17.0924)
+[node name="C68" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.8054, 0, -0.2307, 0, 0.8378, 0, 0.2307, 0, 0.8054, 9.0619, 0, 2.2124)
+[node name="C69" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.2567, 0, 1.2174, 0, 1.2442, 0, -1.2174, 0, -0.2567, -18.8084, 0, 5.1183)
+[node name="C70" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(-1.0583, 0, -0.4921, 0, 1.1671, 0, 0.4921, 0, -1.0583, 20.7711, 0, 18.6079)
+[node name="C71" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.8761, 0, -0.4374, 0, 0.9792, 0, 0.4374, 0, 0.8761, -2.8291, 0, 4.5145)
+[node name="C72" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-1.1091, 0, -0.2151, 0, 1.1297, 0, 0.2151, 0, -1.1091, 9.6197, 0, 1.7308)
+[node name="C73" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(0.1879, 0, -0.7716, 0, 0.7942, 0, 0.7716, 0, 0.1879, 6.846, 0, -1.7526)
+[node name="C74" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(-0.7878, 0, -0.1575, 0, 0.8034, 0, 0.1575, 0, -0.7878, -11.2642, 0, -0.432)
+[node name="C75" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(-0.0936, 0, -0.7189, 0, 0.725, 0, 0.7189, 0, -0.0936, 6.5882, 0, 17.2883)
+[node name="C76" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.3448, 0, 0.8275, 0, 0.8965, 0, -0.8275, 0, 0.3448, 18.8868, 0, -4.804)
+[node name="C77" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(1.28, 0, -0.3224, 0, 1.32, 0, 0.3224, 0, 1.28, -5.0381, 0, -1.618)
+[node name="C78" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(1.2336, 0, -0.8336, 0, 1.4889, 0, 0.8336, 0, 1.2336, 15.6235, 0, -18.7664)
+[node name="C79" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.3804, 0, -0.8512, 0, 0.9324, 0, 0.8512, 0, 0.3804, -15.5967, 0, 17.9226)
+[node name="C80" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.688, 0, -0.2081, 0, 0.7188, 0, 0.2081, 0, 0.688, -5.4751, 0, 11.3114)
+[node name="C81" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(-0.6073, 0, 0.6646, 0, 0.9003, 0, -0.6646, 0, -0.6073, -7.3522, 0, -13.7018)
+[node name="C82" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.3483, 0, 1.4121, 0, 1.4545, 0, -1.4121, 0, 0.3483, 20.65, 0, 8.0038)
+[node name="C83" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.7733, 0, 1.2038, 0, 1.4308, 0, -1.2038, 0, -0.7733, 18.7733, 0, 3.5478)
+[node name="C84" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.7074, 0, -1.2896, 0, 1.4709, 0, 1.2896, 0, 0.7074, 20.6426, 0, -3.3099)
+[node name="C85" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.7614, 0, 1.0847, 0, 1.3252, 0, -1.0847, 0, -0.7614, 14.2753, 0, 9.0588)
+[node name="C86" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.1647, 0, 0.809, 0, 0.8256, 0, -0.809, 0, -0.1647, -3.6532, 0, 20.6923)
+[node name="C87" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.4453, 0, 1.0733, 0, 1.162, 0, -1.0733, 0, -0.4453, -14.3009, 0, 19.3018)
+[node name="C88" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.6459, 0, -0.446, 0, 0.7849, 0, 0.446, 0, -0.6459, -19.1723, 0, 13.6666)
+[node name="C89" parent="." instance=ExtResource("11_pebs")]
+transform = Transform3D(0.9973, 0, -0.9226, 0, 1.3586, 0, 0.9226, 0, 0.9973, 12.3915, 0, -13.2874)
+[node name="C90" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-1.3642, 0, 0.0528, 0, 1.3652, 0, -0.0528, 0, -1.3642, -14.9882, 0, 2.2289)
+[node name="C91" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(0.0872, 0, -0.8153, 0, 0.82, 0, 0.8153, 0, 0.0872, -12.0513, 0, -11.1118)
+[node name="C92" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.4498, 0, 1.2554, 0, 1.3336, 0, -1.2554, 0, -0.4498, 14.3062, 0, -13.4181)
+[node name="C93" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-1.074, 0, 0.7503, 0, 1.3102, 0, -0.7503, 0, -1.074, -19.5738, 0, -15.3005)
+[node name="C94" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.9847, 0, 0.8632, 0, 1.3095, 0, -0.8632, 0, 0.9847, 9.5397, 0, 20.1214)
+[node name="C95" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(-0.9746, 0, 0.6769, 0, 1.1866, 0, -0.6769, 0, -0.9746, 16.4147, 0, 1.6271)
+[node name="C96" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(1.0423, 0, 0.7143, 0, 1.2636, 0, -0.7143, 0, 1.0423, -12.3833, 0, 10.8139)
+[node name="C97" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(1.0016, 0, -0.0298, 0, 1.002, 0, 0.0298, 0, 1.0016, 17.9476, 0, 14.1519)
+[node name="C98" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-1.1637, 0, 0.5843, 0, 1.3021, 0, -0.5843, 0, -1.1637, 15.8882, 0, 11.4701)
+[node name="C99" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.2191, 0, 1.4692, 0, 1.4855, 0, -1.4692, 0, 0.2191, 16.5509, 0, 1.6686)
+[node name="C100" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(1.3176, 0, -0.0427, 0, 1.3183, 0, 0.0427, 0, 1.3176, 7.0981, 0, 15.405)
+[node name="C101" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-1.1577, 0, 0.4714, 0, 1.25, 0, -0.4714, 0, -1.1577, -18.4692, 0, 15.2604)
+[node name="C102" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.4751, 0, -1.2371, 0, 1.3252, 0, 1.2371, 0, 0.4751, 5.0181, 0, -16.259)
+[node name="C103" parent="." instance=ExtResource("11_pebs")]
+transform = Transform3D(0.2006, 0, -1.2598, 0, 1.2757, 0, 1.2598, 0, 0.2006, -4.2081, 0, 13.3903)
+[node name="C104" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.6802, 0, -0.2505, 0, 0.7249, 0, 0.2505, 0, 0.6802, -14.8365, 0, 12.3188)
+[node name="C105" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.9057, 0, -0.2599, 0, 0.9423, 0, 0.2599, 0, -0.9057, -13.4388, 0, -15.0666)
+[node name="C106" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.0247, 0, 1.2397, 0, 1.2399, 0, -1.2397, 0, -0.0247, 11.8238, 0, -20.5768)
+[node name="C107" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.112, 0, -0.7459, 0, 0.7543, 0, 0.7459, 0, 0.112, 6.7868, 0, -1.7475)
+[node name="C108" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.2751, 0, 0.6564, 0, 0.7117, 0, -0.6564, 0, 0.2751, -18.8843, 0, 19.6186)
+[node name="C109" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.1196, 0, 0.8497, 0, 0.8581, 0, -0.8497, 0, 0.1196, 14.1195, 0, -14.1945)
+[node name="C110" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(0.3928, 0, -0.9315, 0, 1.0109, 0, 0.9315, 0, 0.3928, 14.8838, 0, -2.476)
+[node name="C111" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(0.6214, 0, -0.4194, 0, 0.7497, 0, 0.4194, 0, 0.6214, -9.1037, 0, 20.4223)
+[node name="C112" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(0.2403, 0, -0.87, 0, 0.9026, 0, 0.87, 0, 0.2403, -13.9674, 0, 14.1975)
+[node name="C113" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(0.9566, 0, -0.9021, 0, 1.3148, 0, 0.9021, 0, 0.9566, -16.2142, 0, -18.7559)
+[node name="C114" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.4744, 0, 0.6862, 0, 0.8342, 0, -0.6862, 0, -0.4744, 7.3451, 0, 0.5986)
+[node name="C115" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.8478, 0, 0.8998, 0, 1.2363, 0, -0.8998, 0, -0.8478, -19.1891, 0, -12.0558)
+[node name="C116" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.7184, 0, 0.9858, 0, 1.2198, 0, -0.9858, 0, 0.7184, 5.1125, 0, -3.6633)
+[node name="C117" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(1.1231, 0, 0.715, 0, 1.3314, 0, -0.715, 0, 1.1231, -19.9141, 0, -7.4346)
+[node name="C118" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.4485, 0, -0.6368, 0, 0.7789, 0, 0.6368, 0, 0.4485, 8.9953, 0, 13.973)
+[node name="C119" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(-1.048, 0, 0.2158, 0, 1.07, 0, -0.2158, 0, -1.048, -4.0662, 0, 0.3025)
+[node name="C120" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(0.7876, 0, 0.0473, 0, 0.789, 0, -0.0473, 0, 0.7876, -10.0912, 0, -3.9418)
+[node name="C121" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(1.1222, 0, 0.9076, 0, 1.4433, 0, -0.9076, 0, 1.1222, 6.2946, 0, -1.5744)
+[node name="C122" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(-0.5369, 0, 0.9947, 0, 1.1303, 0, -0.9947, 0, -0.5369, -19.3902, 0, 19.3941)
+[node name="C123" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.7484, 0, -1.2294, 0, 1.4393, 0, 1.2294, 0, 0.7484, 14.4454, 0, 8.9979)
+[node name="C124" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(1.0916, 0, 0.7262, 0, 1.3111, 0, -0.7262, 0, 1.0916, 3.8466, 0, -5.9874)
+[node name="C125" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(0.2627, 0, 0.8762, 0, 0.9147, 0, -0.8762, 0, 0.2627, -5.3374, 0, -4.3808)
+[node name="C126" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(1.1859, 0, -0.1699, 0, 1.198, 0, 0.1699, 0, 1.1859, -3.2306, 0, -2.5307)
+[node name="C127" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.6943, 0, -0.2968, 0, 0.7551, 0, 0.2968, 0, -0.6943, -2.8725, 0, 8.5858)
+[node name="C128" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(-0.7098, 0, -0.0442, 0, 0.7112, 0, 0.0442, 0, -0.7098, -12.8552, 0, 2.1894)
+[node name="C129" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(-0.6287, 0, -0.4144, 0, 0.753, 0, 0.4144, 0, -0.6287, -19.6136, 0, -12.0467)
+[node name="C130" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-0.8836, 0, 0.6625, 0, 1.1044, 0, -0.6625, 0, -0.8836, -20.1358, 0, -14.6771)
+[node name="C131" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(-0.1167, 0, 1.3988, 0, 1.4036, 0, -1.3988, 0, -0.1167, 16.343, 0, 2.731)
+[node name="C132" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(0.547, 0, 1.3623, 0, 1.468, 0, -1.3623, 0, 0.547, 19.5824, 0, -0.285)
+[node name="C133" parent="." instance=ExtResource("1_bush")]
+transform = Transform3D(-1.0679, 0, 0.1786, 0, 1.0827, 0, -0.1786, 0, -1.0679, 7.4437, 0, 8.6896)
+[node name="C134" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(-0.8038, 0, -1.2532, 0, 1.4888, 0, 1.2532, 0, -0.8038, 10.1524, 0, 1.6848)
+[node name="C135" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(1.1751, 0, 0.0136, 0, 1.1752, 0, -0.0136, 0, 1.1751, -8.5723, 0, -14.208)
+[node name="C136" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(1.1051, 0, -0.1979, 0, 1.1227, 0, 0.1979, 0, 1.1051, 10.7478, 0, -15.1233)
+[node name="C137" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(-0.7419, 0, 1.1679, 0, 1.3836, 0, -1.1679, 0, -0.7419, -14.8577, 0, 15.9938)
+[node name="C138" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-1.2629, 0, 0.5524, 0, 1.3784, 0, -0.5524, 0, -1.2629, -6.8378, 0, 4.0117)
+[node name="C139" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.8269, 0, -0.0767, 0, 0.8305, 0, 0.0767, 0, 0.8269, 5.9066, 0, -17.6466)
+[node name="C140" parent="." instance=ExtResource("5_wispy")]
+transform = Transform3D(0.0583, 0, 0.9813, 0, 0.983, 0, -0.9813, 0, 0.0583, 15.6358, 0, -20.398)
+[node name="C141" parent="." instance=ExtResource("7_clover")]
+transform = Transform3D(-0.208, 0, 1.0297, 0, 1.0505, 0, -1.0297, 0, -0.208, -17.0786, 0, 17.9263)
+[node name="C142" parent="." instance=ExtResource("10_pebr")]
+transform = Transform3D(0.6167, 0, -0.7948, 0, 1.006, 0, 0.7948, 0, 0.6167, -5.0577, 0, -5.3996)
+[node name="C143" parent="." instance=ExtResource("9_rock")]
+transform = Transform3D(-0.7201, 0, -0.7435, 0, 1.0351, 0, 0.7435, 0, -0.7201, -15.5829, 0, -1.8193)
+[node name="C144" parent="." instance=ExtResource("6_tall")]
+transform = Transform3D(1.0972, 0, -0.0459, 0, 1.0982, 0, 0.0459, 0, 1.0972, -4.6467, 0, -11.7477)
+[node name="C145" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.2962, 0, 1.1675, 0, 1.2044, 0, -1.1675, 0, 0.2962, 19.3564, 0, 17.9557)
+[node name="C146" parent="." instance=ExtResource("4_grass")]
+transform = Transform3D(0.201, 0, 0.914, 0, 0.9358, 0, -0.914, 0, 0.201, 19.6708, 0, -4.6363)
+[node name="C147" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(-0.7663, 0, -1.1816, 0, 1.4084, 0, 1.1816, 0, -0.7663, 11.9879, 0, 15.6222)
+[node name="C148" parent="." instance=ExtResource("2_bushf")]
+transform = Transform3D(0.3045, 0, 1.0936, 0, 1.1352, 0, -1.0936, 0, 0.3045, 15.7488, 0, -12.6671)
+[node name="C149" parent="." instance=ExtResource("3_fern")]
+transform = Transform3D(-0.0817, 0, 1.3765, 0, 1.3789, 0, -1.3765, 0, -0.0817, -20.3035, 0, 13.473)
+[node name="C150" parent="." instance=ExtResource("8_flowers")]
+transform = Transform3D(0.5046, 0, 0.6283, 0, 0.8059, 0, -0.6283, 0, 0.5046, 8.7498, 0, -16.5387)

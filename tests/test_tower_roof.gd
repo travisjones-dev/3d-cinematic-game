@@ -91,47 +91,36 @@ func test_upper_walls_close_the_gap_between_old_wall_top_and_ceiling() -> void:
 
 	assert_eq(checked, 4, "should have checked all four upper walls")
 
-func test_village_guard_tower_still_reads_as_cracked() -> void:
-	# ── REPLACED 2026-08-14, deliberately, when the tower got its art pass ──────────────────
-	# This used to assert that `GuardTower/CrackedTop/Roof` existed and inherited the leaning
-	# crown's tilt. The art swap replaced the graybox shaft, leaning crown and roof with the
-	# pack's Bell_Tower, which carries its own crown and roof — so those nodes are gone and that
-	# assertion could not survive. It was rewritten rather than deleted, because the guarantee
-	# underneath it still matters; only the geometry expressing it changed.
+func test_village_guard_tower_is_still_visible_from_the_village() -> void:
+	# ── HISTORY, so this is not re-litigated ───────────────────────────────────────────────
+	# Originally asserted `GuardTower/CrackedTop/Roof` existed and inherited the leaning crown's
+	# tilt. The 2026-08-14 art pass replaced the graybox shaft, crown and roof with the pack's
+	# Bell_Tower, so those nodes went. It was briefly rewritten to guard the `Crack` mesh instead,
+	# because the dialogue points at a "cracked tower" — then the crack was removed outright on
+	# explicit instruction the same day.
 	#
-	# What it guards NOW is stronger, and is a story dependency rather than a modelling detail.
-	# The writing points directly at the crack:
-	#   dialogue/act1/friend.dtl:17  "He gestures toward the CRACKED TOWER behind you."
-	#   dialogue/act1/love.dtl:4     "the top of the CRACKED steps"
-	#   docs/zones/zone_01_home_village.md:17  "cracked, age-worn stone"
-	# Delete the Crack and the friend gestures at a building that contradicts his own line. That
-	# is a narrative break, not a visual nitpick, and it is exactly the kind of thing a future art
-	# pass would remove without noticing — hence a test.
+	# ⚠️ That leaves a KNOWN, ACCEPTED narrative loose end, recorded here because a test is where
+	# someone will look: `dialogue/act1/friend.dtl:17` still gestures toward "the cracked tower"
+	# and `love.dtl:4` still says "the cracked steps". Those lines describe something that no
+	# longer exists and need a human writing pass. Deliberately NOT asserted — the decision was
+	# made with the consequence flagged, and a failing test would just nag about a settled call.
 	#
-	# Whether the tower LOOKS roofed is now human-verified, like all art. Whether it still reads
-	# as cracked is machine-guarded here, because the dialogue depends on it.
+	# What survives is the weakest useful guarantee: the tower is still THERE and still has
+	# geometry. That catches an art swap that leaves the node empty — the silent-blank failure
+	# mode this project has already hit once. Everything about how it LOOKS is human-verified.
 	var nodes: Dictionary = _read_scene(VILLAGE)
-	var path: String = "./Geometry/GuardTower/Crack"
+	var path: String = "./Geometry/GuardTower"
 
-	assert_true(nodes.has(path),
-		"the village GuardTower has no Crack — friend.dtl gestures at a 'cracked tower', so this "
-		+ "is a narrative break. If the art now expresses the crack itself, update this test "
-		+ "deliberately; do not just delete it.")
+	assert_true(nodes.has(path), "the village GuardTower is gone entirely")
 	if not nodes.has(path):
 		return
 
-	var crack: AABB = _mesh_box(nodes, path)
-	var tower: AABB = _mesh_box(nodes, "./Geometry/GuardTower")
-
-	# The crack must actually be ON the tower. A crack left floating beside it after the shaft was
-	# resized would still pass a mere existence check while reading as a stray dark box.
-	assert_true(tower.grow(0.75).intersects(crack),
-		"the Crack at %s is not on the tower body %s — it reads as a floating prop" % [crack, tower])
-
-	# And it must be a vertical fracture running up the wall, not a flat sliver on the ground.
-	assert_gt(crack.size.y, 2.0,
-		"the Crack is only %.2f m tall — too small to read as the fracture the dialogue points at"
-			% crack.size.y)
+	var tower: AABB = SG.body_box(nodes, path)
+	assert_ne(tower.size, Vector3.ZERO,
+		"the village GuardTower has no measurable geometry — the art swap left it empty")
+	assert_gt(tower.size.y, 5.0,
+		"the village GuardTower is only %.2f m tall — it no longer reads as a tower over the "
+		% tower.size.y + "village, and the interior it leads to is 12.8 m of climb")
 
 ## Reads a .tscn without instantiating it. See tests/helpers/scene_geometry.gd.
 func _read_scene(path: String) -> Dictionary:

@@ -17,15 +17,16 @@ so an unused pack can be dropped from the credits rather than crediting art that
 
 | Asset | Artist | Source | Used for |
 |---|---|---|---|
-| **RPG Character Pack** | Quaternius | [quaternius.com](https://quaternius.com/packs/rpgcharacters.html) | The player character (Warrior). Rig + Idle/Walk/Run drive `player.tscn` |
-| **Medieval Village Pack** | Quaternius | [quaternius.com](https://quaternius.com/packs/medievalvillage.html) | Village buildings — both homes, the mill, the stables |
+| **RPG Character Pack** | Quaternius | [quaternius.com](https://quaternius.com/packs/rpgcharacters.html) | The whole cast — Warrior (player), Cleric (Aeia), Ranger (the friend), Wizard (Elder Mishka), Monk (the blacksmith). Rig + Idle/Walk/Run drive `player.tscn` |
+| **Medieval Village Pack** | Quaternius | [quaternius.com](https://quaternius.com/packs/medievalvillage.html) | Village buildings — both homes, the mill, the stables, the guard tower |
+| **Stylized Nature MegaKit** | Quaternius | via [Poly Pizza](https://poly.pizza/bundle/Stylized-Nature-MegaKit-T34GZFA0fm) | Trees (`tree.tscn` + pine/twisted variants), the 156-tree outer forest, and the grass/fern/bush/flower/rock ground cover |
 | **Sparse Grass** (texture) | Poly Haven | [polyhaven.com/a/sparse_grass](https://polyhaven.com/a/sparse_grass) | Village ground diffuse + normal |
+| **Dirt Floor** (texture) | Poly Haven | [polyhaven.com/a/dirt_floor](https://polyhaven.com/a/dirt_floor) | The dirt path through the village centre |
 
 ## Downloaded, staged for use
 
 | Asset | Artist | Source | Intended for |
 |---|---|---|---|
-| **Stylized Nature MegaKit** | Quaternius | via [Poly Pizza](https://poly.pizza/bundle/Stylized-Nature-MegaKit-T34GZFA0fm) | Trees — replacing the graybox `tree.tscn` |
 | **Medieval Village MegaKit** | Quaternius | [quaternius.com](https://quaternius.com/packs/medievalvillagemegakit.html) | Set dressing: chimneys, wagon, crates, fences, vines |
 | **Medieval Village Pack — props** | Quaternius | [quaternius.com](https://quaternius.com/packs/medievalvillage.html) | Well, cart, barrels, hay, bonfire, market stands, fences |
 
