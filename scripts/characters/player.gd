@@ -18,9 +18,30 @@ extends CharacterBody3D
 ## How fast the model swings to face the travel direction (radians/sec-ish via lerp).
 @export var turn_speed: float = 9.0
 
+@export_group("Animation")
+## Crossfade time when switching locomotion clips. Long enough to hide the cut, short
+## enough that a stop still reads as deliberate.
+@export var anim_blend: float = 0.15
+## Horizontal speed below which the character counts as standing still.
+@export var idle_threshold: float = 0.2
+## Clamp on animation playback rate, so easing in/out of a speed does not produce a
+## comically fast or sludgy stride while the velocity ramp is still running.
+@export var anim_rate_min: float = 0.6
+@export var anim_rate_max: float = 1.6
+
 ## The visual pivot that rotates to face movement. Kept separate from the body so the
 ## collision capsule never spins — only the look direction does.
 @onready var model: Node3D = $Model
+
+## Locomotion clips live on the imported character's own AnimationPlayer. Driven directly
+## with crossfades rather than through an AnimationTree: same result on screen for
+## idle/walk/run, without hand-authoring a blend-tree resource. A BlendSpace1D is the
+## natural upgrade if locomotion ever needs more than three states.
+@onready var _anim: AnimationPlayer = get_node_or_null("Model/Warrior/AnimationPlayer")
+
+## Which locomotion clip is playing, so play() is only called on an actual state change —
+## calling it every frame would restart the clip and freeze the character mid-stride.
+var _current_clip: String = ""
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 
@@ -80,6 +101,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_face_travel_direction(delta)
+	_update_locomotion()
 
 ## Converts stick/WASD input into a world direction aligned to where the camera looks,
 ## so "forward" always means "away from the camera". Falls back to the body's own yaw
@@ -91,6 +113,36 @@ func _camera_relative_direction(input_dir: Vector2) -> Vector3:
 	var yaw: float = cam.global_rotation.y if cam != null else global_rotation.y
 	# Godot forward is -Z, so move_forward (input_dir.y < 0) maps to -Z before rotation.
 	return Vector3(input_dir.x, 0.0, input_dir.y).rotated(Vector3.UP, yaw).normalized()
+
+## Picks idle/walk/run from actual horizontal speed — not from input — so the character keeps
+## striding through the deceleration ramp instead of snapping to idle the instant a key is
+## released, and so a cutscene or dialogue that zeroes the velocity settles into Idle for free.
+##
+## Playback rate tracks speed against the clip's nominal speed. That is the cheap 80% of a
+## foot-slide fix: the stride still will not match perfectly at every velocity (that needs a
+## BlendSpace1D and stride measurement), but it removes the obvious mismatch while accelerating.
+func _update_locomotion() -> void:
+	if _anim == null:
+		return
+
+	var speed: float = Vector2(velocity.x, velocity.z).length()
+	var clip: String = "Idle"
+	var rate: float = 1.0
+
+	if speed >= idle_threshold:
+		# Split at the midpoint between the two gaits rather than at run_speed, so the run clip
+		# takes over while still accelerating instead of only at full sprint.
+		if speed <= (walk_speed + run_speed) * 0.5:
+			clip = "Walk"
+			rate = clampf(speed / walk_speed, anim_rate_min, anim_rate_max)
+		else:
+			clip = "Run"
+			rate = clampf(speed / run_speed, anim_rate_min, anim_rate_max)
+
+	if clip != _current_clip:
+		_anim.play(clip, anim_blend)
+		_current_clip = clip
+	_anim.speed_scale = rate
 
 ## Rotates the model so its forward (-Z) points along horizontal velocity. Skipped at
 ## very low speed so the model doesn't jitter when nearly stopped.

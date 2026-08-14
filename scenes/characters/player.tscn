@@ -1,23 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://assets/models/warrior.gltf" id="2_warrior"]
 
 [sub_resource type="CapsuleShape3D" id="Col"]
 radius = 0.4
 height = 2.0
-
-[sub_resource type="CapsuleMesh" id="BodyMesh"]
-radius = 0.4
-height = 2.0
-
-[sub_resource type="StandardMaterial3D" id="BodyMat"]
-albedo_color = Color(0.9, 0.85, 0.3, 1)
-
-[sub_resource type="BoxMesh" id="NoseMesh"]
-size = Vector3(0.25, 0.25, 0.4)
-
-[sub_resource type="StandardMaterial3D" id="NoseMat"]
-albedo_color = Color(0.15, 0.15, 0.2, 1)
 
 [node name="Player" type="CharacterBody3D"]
 safe_margin = 0.2
@@ -28,11 +16,12 @@ shape = SubResource("Col")
 
 [node name="Model" type="Node3D" parent="."]
 
-[node name="Body" type="MeshInstance3D" parent="Model"]
-mesh = SubResource("BodyMesh")
-surface_material_override/0 = SubResource("BodyMat")
-
-[node name="Nose" type="MeshInstance3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -0.5)
-mesh = SubResource("NoseMesh")
-surface_material_override/0 = SubResource("NoseMat")
+; Mounted under Model (not the body) so it inherits the turn-to-face-travel rotation while the
+; collision capsule never spins — see player.gd:_face_travel_direction.
+;
+; The -1.0 on Y is load-bearing: CapsuleShape3D height 2.0 is CENTRED on the CharacterBody3D
+; origin, so the player's origin sits 1.0 m above the ground (test_village_boundaries.gd:27
+; depends on exactly this). The imported Warrior is feet-pivoted, so without the offset it
+; would float 1 m in the air.
+[node name="Warrior" parent="Model" instance=ExtResource("2_warrior")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

@@ -81,7 +81,18 @@ No combat, no crafting/economy, no procedural terrain, no streaming, no voice ac
 ## Milestone 2 — Zone 1 Art Pass  ⟵ CURRENT
 **Scoped and approved 2026-08-12.** Goal, in the user's words: make the *first zone actually feel done* rather than accumulating more graybox zones. Aligns with the Zone Design Law (density over size) and pillar #2 (mood over fidelity).
 
-**Decisions taken 2026-08-12 (were ART_PIPELINE.md's open questions 1–6):**
+> ### ⚠️ DECISIONS REVERSED 2026-08-14 (human decision, in session) — read this before the 08-12 list below
+> Asked for a demo the same day, the 08-12 plan was judged too slow and **the asset-pack route was adopted instead** — which is what `ART_PIPELINE.md:245` originally recommended before it was overruled on the 12th.
+>
+> - **Environment: NO LONGER user-authored.** Now an asset pack: **Quaternius**, CC0 (free, commercial use, no attribution). Supersedes "user-authored in Blender".
+> - **Style: pack art direction accepted as-is.** Supersedes "low-poly flat-shaded on the existing 12-colour palette". **This knowingly puts the warm-village-gold vs cold-shore tension at risk** — `ART_PIPELINE.md:113` calls that "the central visual tension to protect". Flagged before the decision; re-judge against real art, exactly as the atmosphere pass was left open.
+> - **Characters: Quaternius RPG Character Pack, not Mixamo.** Six rigged, animated characters covering the whole cast (Player, Friend, Aeia, Mishka, Blacksmith) from **one source**, so the 08-12 one-source rule still holds.
+> - **Phase 3 partly pulled forward:** the player model + velocity-driven locomotion landed in Phase 2 rather than waiting.
+> - **`docs/art_briefs/home.md` and `tools/blender/author_home.py` are now a fallback, not the plan.** Kept deliberately: if the pack disappoints, one command regenerates a spec-exact home.
+>
+> **Still true and still load-bearing:** collision stays hand-authored primitives (never derived from art meshes); `.glb`/`.gltf` committed via LFS with plain-text `.import` sidecars; visual results are human-judged.
+
+**Decisions taken 2026-08-12 (were ART_PIPELINE.md's open questions 1–6) — SUPERSEDED IN PART, see above:**
 - **Style: low-poly flat-shaded.** Chosen because it *removes* the hardest beginner skills — no UV unwrapping, no PBR texture painting, no Substance — and because the existing 12-material palette transfers unchanged.
 - **Environment: user-authored in Blender.** Buildings, trees, props.
 - **Characters: Mixamo / one character pack.** Rigging + skinning + animating 5 humans and a quadruped as a beginner is months; this is the schedule risk that would strand the village in graybox. **One source only** — mixed sources are what make a game read as an asset flip.
@@ -112,9 +123,12 @@ Also landed: `tools/blender/export_glb.py` (pins export settings; GUI equivalent
 ### Phase 2 — Environment (user authors, Claude integrates)  ⟵ IN PROGRESS
 - [x] **Harness hardened first** (2026-08-13) — the AABB guards can now measure imported `.glb` art and can no longer silently skip. See the re-assessed risk below; this replaces "update the tests per asset"
 - [x] **Authoring brief for the first building type** — `docs/art_briefs/home.md`: exact envelope (6 × 6 × 5.2 m), base pivot, 4 named material slots with **hex** palette values, door-faces−Y-in-Blender, no collision
-- [ ] **⏳ BLOCKED ON USER: author `assets/source/home.blend`** → export `home.glb`. Environment art is user-authored per the M2 decision; Claude cannot make this
-- [ ] Integrate + verify the home (pivot, envelope, door facing, 4 surfaces, palette), swap `Geometry/Home1` + `Home2`, tests + boot, human visual check
-- [ ] Homes → mill/stables → guard tower → trees → props (banners, anvil, carved heart)
+- [x] **Player character swapped to real art (2026-08-14)** — Quaternius Warrior. Import-time `root_scale=0.687` (pack ships 2.911 m, spec is 2.0); mounted at `Model` with a **−1.0 Y offset** because the capsule is centre-pivoted while the model is feet-pivoted; `Idle`/`Run`/`Walk` loop modes forced on in the `.import` (**every clip ships `loop_mode=0`** and would freeze mid-stride). Verified: foot bones at y 0.015, body 1.986 m, 70/70 tests, clean boot
+- [x] **Velocity-driven locomotion (was Phase 3)** — `player.gd:_update_locomotion` picks Idle/Walk/Run from actual horizontal speed, not input, so the stride survives the deceleration ramp and cutscenes settle to Idle for free. Playback rate tracks speed to cut foot-slide. Driven via `AnimationPlayer` crossfades rather than an `AnimationTree`; a `BlendSpace1D` is the upgrade if locomotion outgrows three states
+- [ ] **⏳ BLOCKED ON USER: download Quaternius Medieval Village Pack** (44 whole-building models). ⚠️ The **Medieval Village MegaKit** already downloaded is a *modular kit* — 176 walls/corners/roof pieces, **zero complete buildings** — so it needs kitbashing, not a mesh swap. Keep it for props (`Prop_Chimney`, `Prop_Wagon`, `Prop_Crate`, fences, vines)
+- [ ] Integrate + verify the buildings, swap `Geometry/Home1` + `Home2` first, tests + boot, human visual check
+- [ ] Remaining cast (Friend, Aeia, Mishka, Blacksmith) from the same character pack
+- [ ] Mill/stables → guard tower → trees → props (banners, anvil, carved heart)
 
 ### Phase 3 — Characters + animation engineering
 - [ ] Retarget one Mixamo source to the 2.0 m / feet-pivot spec; mount under the existing `Model` node
