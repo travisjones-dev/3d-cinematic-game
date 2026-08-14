@@ -42,6 +42,13 @@ Blender MCP servers were considered and **declined** for the pipeline (they driv
 
 ⚠️ **Accepted risk, written down before it bites:** `test_interaction_alignment`, `test_tower_roof` and `test_village_boundaries` assert on **mesh AABBs** and *will* break as meshes are swapped. They are the guard against the "visible but unusable" bug class — **the wrong fix is loosening assertions until they pass.** Update them deliberately, per asset.
 
+## Skills written from the M2 art pass (2026-08-14)
+Four new skills capture what the art pass cost to learn. Reach for them before re-deriving any of it:
+- **`godot-asset-pack-integration`** — swapping graybox for imported art: measuring pack scale, pivots, facing, centring, refitting collision, and why growing one building displaces its neighbours, the walkable routes and its own trigger.
+- **`blender-glb-export`** — `tools/blender/export_glb.py`, the white-material bug and the two fixes that fail silently, sRGB↔linear, import settings Godot gets wrong, BOM/Transform3D traps.
+- **`godot-character-assembly`** — the three-pack character split, the Universal Animation Library, skin binding by name, seating against an animated pose, hand-posing in skeleton space.
+- **`godot-environment-scatter`** — generated forest/ground-cover scenes, square-vs-circular rings, keep-outs, why scatter carries no collision.
+
 ## ⚠️ Imported art: three silent failure modes, all hit on 2026-08-14
 None of these throw an error. Each produces a valid asset that is visibly wrong, so they cost time out of proportion to their size.
 
