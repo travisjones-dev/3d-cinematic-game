@@ -1,6 +1,6 @@
 # 3D Cinematic RPG (working title)
 
-![Gameplay — the village at golden hour](docs/demo.gif)
+![Gameplay: walking the misty forest path while the friend's dialogue plays](docs/demo.gif)
 
 A story-first medieval fantasy RPG built in **Godot 4.6 / GDScript**: handcrafted, interconnected zones that feel open through density of discovery rather than acreage, with cinematic presentation.
 
